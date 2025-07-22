@@ -31,10 +31,10 @@ export default function HomePage() {
   };
 
   const features = [
-    { icon: IndianRupee, title: 'Track Expenses', desc: 'Monitor every rupee', color: 'from-green-400 to-blue-500' },
-    { icon: TrendingUp, title: 'Smart Analytics', desc: 'Insights that matter', color: 'from-blue-400 to-purple-500' },
-    { icon: PieChart, title: 'Visual Reports', desc: 'See your spending', color: 'from-purple-400 to-pink-500' },
-    { icon: BarChart3, title: 'Budget Goals', desc: 'Stay on track', color: 'from-pink-400 to-red-500' }
+    { icon: IndianRupee, title: 'Track Expenses', desc: 'Monitor every rupee', color: 'from-green-400 to-blue-500'  ,url:'/tracker' },
+    { icon: TrendingUp, title: 'Smart Analytics', desc: 'Insights that matter', color: 'from-blue-400 to-purple-500' ,url:'/analytics'},
+    { icon: PieChart, title: 'Visual Reports', desc: 'See your spending', color: 'from-purple-400 to-pink-500' ,url:'/reports'},
+    { icon: BarChart3, title: 'Budget Goals', desc: 'Stay on track', color: 'from-pink-400 to-red-500' ,url:'/budget-checker'}
   ];
 
   return (
@@ -140,7 +140,9 @@ export default function HomePage() {
               const Icon = feature.icon;
               const isHovered = hoveredFeature === index;
               return (
-                <div
+                <>
+                  <a href={`${feature.url}`}>
+                    <div
                   key={index}
                   className={`group p-6 rounded-3xl backdrop-blur-lg transition-all duration-500 cursor-pointer transform hover:scale-110 hover:-translate-y-2 ${
                     isHovered 
@@ -163,6 +165,11 @@ export default function HomePage() {
           
                   <div className={`mt-3 h-0.5 bg-gradient-to-r ${feature.color} rounded-full transform transition-all duration-300 ${isHovered ? 'scale-x-100' : 'scale-x-0'}`}></div>
                 </div>
+                  </a>
+                </>
+
+                
+                
               );
             })}
           </div>
