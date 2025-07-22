@@ -1,0 +1,40 @@
+.loader-page {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: linear-gradient(135deg, #5d72d3, #764ba2);
+  animation: fadeIn 1s ease-in-out;
+  color: #ffffff;
+  font-family: 'Poppins', sans-serif;
+}
+
+.logo-bounce {
+  width: 100px;
+  height: 100px;
+  animation: bounce 1.5s infinite;
+  margin-bottom: 20px;
+}
+
+.loader-text {
+  font-size: 1.2rem;
+  font-weight: 500;
+  opacity: 0.9;
+}
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
