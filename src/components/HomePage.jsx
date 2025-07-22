@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { IndianRupee, TrendingUp, PieChart, BarChart3, Sparkles, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import Footer from './Footer';
 
 
 export default function HomePage() {
@@ -73,7 +74,7 @@ export default function HomePage() {
         <div className={`transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
           
         
-          <div className="mb-8 relative" style={{ animationDelay: '0.2s' }}>
+          <div className="m-8 relative" style={{ animationDelay: '0.2s' }}>
             <div className="w-24 h-24 mx-auto bg-gradient-to-br from-blue-400 via-purple-500 to-pink-500 rounded-3xl flex items-center justify-center mb-6 transform hover:scale-110 hover:rotate-6 transition-all duration-300 shadow-2xl relative overflow-hidden">
               <Sparkles className="w-12 h-12 text-white animate-pulse relative z-10" />
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 translate-x-full animate-[shimmer_2s_ease-in-out_infinite]"></div>
@@ -193,18 +194,7 @@ export default function HomePage() {
           100% { transform: translateY(0); opacity: 1; }
         }
       `}</style>
-      <footer className="w-full text-center py-6 text-gray-400 text-sm">
-        Made with <span className="text-red-500">♥</span> by{' '}
-        <a
-          href="https://www.linkedin.com/in/tanmay-kalra-09oct/"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-blue-400 hover:underline"
-          style={{ zIndex: 50, position: 'relative', pointerEvents: 'auto' }}
-        >
-          Tanmay Kalra
-        </a>
-      </footer>
+      <Footer />
     </div>
   
   );

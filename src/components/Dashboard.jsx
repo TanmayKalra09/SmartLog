@@ -1,24 +1,64 @@
+import {
+  Plus,
+  TrendingUp,
+  TrendingDown,
+  Wallet,
+  IndianRupee,
+  Calendar,
+  Tag,
+  Filter,
+  Search,
+  Eye,
+  EyeOff,
+  ChevronDown,
+  Trash2,
+} from "lucide-react";
+import { useTransactions } from "./TransactionContext";
 import { useState, useEffect } from 'react';
 import AddTransactionModal from './AddTransactionModal';
-import { Plus, TrendingUp, TrendingDown, Wallet, IndianRupee, Calendar, Tag, Filter, Search, Eye, EyeOff, Trash2 } from 'lucide-react';
-import { useTransactions } from './TransactionContext';
+import ConfirmationModal from './ConfirmationModal';
+import Footer from './Footer';
 
 export default function Dashboard() {
   const { transactions, income, expense, setTransactions } = useTransactions();
   const [showModal, setShowModal] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("All");
   const [isVisible, setIsVisible] = useState(false);
   const [hoveredCard, setHoveredCard] = useState(null);
   const [showBalance, setShowBalance] = useState(true);
-  const [animatedValues, setAnimatedValues] = useState({ income: 0, expense: 0, balance: 0 });
+  const [animatedValues, setAnimatedValues] = useState({
+    income: 0,
+    expense: 0,
+    balance: 0,
+  });
 
   const balance = income - expense;
-  const categories = ['All', ...new Set(transactions.map(t => t.category))];
+  const defaultCategories = [
+    "Food",
+    "Entertainment",
+    "Utilities",
+    "Income",
+    "Transport",
+    "Shopping",
+    "Health",
+    "Education",
+  ];
+  const categories = ["All", ...new Set(transactions.map((t) => t.category))];
+
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [transactionToDelete, setTransactionToDelete] = useState(null)
 
   const handleDelete = (id) => {
-    setTransactions(prev => prev.filter(t => t.id !== id));
+    setTransactionToDelete(id)
+    setShowDeleteModal(true)
   };
+
+  const handleConfirmDelete = () => {
+    setTransactions(prev => prev.filter(t => t.id !== transactionToDelete));
+    setShowDeleteModal(false)
+    setTransactionToDelete(null)
+  }
 
 
   useEffect(() => {
@@ -35,7 +75,7 @@ export default function Dashboard() {
       setAnimatedValues({
         income: Math.floor(incomeStep * currentStep),
         expense: Math.floor(expenseStep * currentStep),
-        balance: Math.floor(balanceStep * currentStep)
+        balance: Math.floor(balanceStep * currentStep),
       });
 
       if (currentStep >= steps) {
@@ -47,65 +87,78 @@ export default function Dashboard() {
     return () => clearInterval(timer);
   }, [income, expense, balance]);
 
-
-  const filteredTransactions = transactions.filter(t => {
-    const matchesSearch = t.note.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         t.category.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === 'All' || t.category === selectedCategory;
+  const filteredTransactions = transactions.filter((t) => {
+    const matchesSearch =
+      t.note.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      t.category.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory =
+      selectedCategory === "All" || t.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
 
   const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('en-IN', {
-      style: 'currency',
-      currency: 'INR',
-      minimumFractionDigits: 0
+    return new Intl.NumberFormat("en-IN", {
+      style: "currency",
+      currency: "INR",
+      minimumFractionDigits: 0,
     }).format(amount);
   };
 
   const getTransactionIcon = (category) => {
     const icons = {
-      'Food': '🍽️',
-      'Entertainment': '🎬',
-      'Utilities': '⚡',
-      'Income': '💰',
-      'Transport': '🚗',
-      'Shopping': '🛍️',
-      'Health': '🏥',
-      'Education': '📚'
+      Food: "🍽️",
+      Entertainment: "🎬",
+      Utilities: "⚡",
+      Income: "💰",
+      Transport: "🚗",
+      Shopping: "🛍️",
+      Health: "🏥",
+      Education: "📚",
     };
-    return icons[category] || '📝';
+
+    return icons[category] || "📝";
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 p-6">
       <div className="max-w-6xl mx-auto">
-        
-        <div className={`transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'}`}>
+        <div
+          className={`transition-all duration-1000 ${
+            isVisible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4"
+          }`}
+        >
           <h2 className="text-4xl font-black bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-2">
             Dashboard
           </h2>
-          <p className="text-gray-600 mb-8">Track your financial journey with smart insights</p>
+          <p className="text-gray-600 mb-8">
+            Track your financial journey with smart insights
+          </p>
         </div>
 
-       
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-         
-          <div 
+          <div
             className={`relative p-6 rounded-2xl transition-all duration-500 cursor-pointer transform hover:scale-105 hover:-translate-y-2 ${
-              hoveredCard === 'income' ? 'shadow-2xl shadow-green-200' : 'shadow-lg'
-            } ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
-            style={{ 
-              background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-              animationDelay: '0.2s'
+              hoveredCard === "income"
+                ? "shadow-2xl shadow-green-200"
+                : "shadow-lg"
+            } ${
+              isVisible
+                ? "opacity-100 translate-y-0"
+                : "opacity-0 translate-y-8"
+            }`}
+            style={{
+              background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
+              animationDelay: "0.2s",
             }}
-            onMouseEnter={() => setHoveredCard('income')}
+            onMouseEnter={() => setHoveredCard("income")}
             onMouseLeave={() => setHoveredCard(null)}
           >
             <div className="absolute top-4 right-4">
               <TrendingUp className="w-8 h-8 text-white/80" />
             </div>
-            <div className="text-white/80 text-sm font-medium mb-2">Total Income</div>
+            <div className="text-white/80 text-sm font-medium mb-2">
+              Total Income
+            </div>
             <div className="text-3xl font-black text-white mb-1">
               {formatCurrency(animatedValues.income)}
             </div>
@@ -115,22 +168,29 @@ export default function Dashboard() {
             </div>
           </div>
 
-         
-          <div 
+          <div
             className={`relative p-6 rounded-2xl transition-all duration-500 cursor-pointer transform hover:scale-105 hover:-translate-y-2 ${
-              hoveredCard === 'expense' ? 'shadow-2xl shadow-red-200' : 'shadow-lg'
-            } ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
-            style={{ 
-              background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
-              animationDelay: '0.4s'
+              hoveredCard === "expense"
+                ? "shadow-2xl shadow-red-200"
+                : "shadow-lg"
+            } ${
+              isVisible
+                ? "opacity-100 translate-y-0"
+                : "opacity-0 translate-y-8"
+            }`}
+            style={{
+              background: "linear-gradient(135deg, #ef4444 0%, #dc2626 100%)",
+              animationDelay: "0.4s",
             }}
-            onMouseEnter={() => setHoveredCard('expense')}
+            onMouseEnter={() => setHoveredCard("expense")}
             onMouseLeave={() => setHoveredCard(null)}
           >
             <div className="absolute top-4 right-4">
               <TrendingDown className="w-8 h-8 text-white/80" />
             </div>
-            <div className="text-white/80 text-sm font-medium mb-2">Total Expense</div>
+            <div className="text-white/80 text-sm font-medium mb-2">
+              Total Expense
+            </div>
             <div className="text-3xl font-black text-white mb-1">
               {formatCurrency(animatedValues.expense)}
             </div>
@@ -140,42 +200,60 @@ export default function Dashboard() {
             </div>
           </div>
 
-         
-          <div 
+          <div
             className={`relative p-6 rounded-2xl transition-all duration-500 cursor-pointer transform hover:scale-105 hover:-translate-y-2 ${
-              hoveredCard === 'balance' ? 'shadow-2xl shadow-blue-200' : 'shadow-lg'
-            } ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
-            style={{ 
-              background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
-              animationDelay: '0.6s'
+              hoveredCard === "balance"
+                ? "shadow-2xl shadow-blue-200"
+                : "shadow-lg"
+            } ${
+              isVisible
+                ? "opacity-100 translate-y-0"
+                : "opacity-0 translate-y-8"
+            }`}
+            style={{
+              background: "linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)",
+              animationDelay: "0.6s",
             }}
-            onMouseEnter={() => setHoveredCard('balance')}
+            onMouseEnter={() => setHoveredCard("balance")}
             onMouseLeave={() => setHoveredCard(null)}
           >
             <div className="absolute top-4 right-4 flex items-center gap-2">
-              <button 
+              <button
                 onClick={() => setShowBalance(!showBalance)}
                 className="text-white/80 hover:text-white transition-colors"
               >
-                {showBalance ? <Eye className="w-6 h-6" /> : <EyeOff className="w-6 h-6" />}
+                {showBalance ? (
+                  <Eye className="w-6 h-6" />
+                ) : (
+                  <EyeOff className="w-6 h-6" />
+                )}
               </button>
               <Wallet className="w-8 h-8 text-white/80" />
             </div>
-            <div className="text-white/80 text-sm font-medium mb-2">Current Balance</div>
-            <div className="text-3xl font-black text-white mb-1">
-              {showBalance ? formatCurrency(animatedValues.balance) : '••••••'}
+            <div className="text-white/80 text-sm font-medium mb-2">
+              Current Balance
             </div>
-            <div className={`text-xs ${balance >= 0 ? 'text-green-200' : 'text-red-200'}`}>
-              {balance >= 0 ? '✓ Healthy balance' : '⚠ Monitor spending'}
+            <div className="text-3xl font-black text-white mb-1">
+              {showBalance ? formatCurrency(animatedValues.balance) : "••••••"}
+            </div>
+            <div
+              className={`text-xs ${
+                balance >= 0 ? "text-green-200" : "text-red-200"
+              }`}
+            >
+              {balance >= 0 ? "✓ Healthy balance" : "⚠ Monitor spending"}
             </div>
           </div>
         </div>
 
-       
-        <div className={`flex flex-col md:flex-row gap-4 mb-8 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`} style={{ animationDelay: '0.8s' }}>
-          
-          <button 
-            onClick={() => setShowModal(true)} 
+        <div
+          className={`flex flex-col md:flex-row gap-4 mb-8 transition-all duration-1000 ${
+            isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+          }`}
+          style={{ animationDelay: "0.8s" }}
+        >
+          <button
+            onClick={() => setShowModal(true)}
             className="group relative bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-2xl font-bold shadow-lg hover:shadow-xl transform hover:scale-105 hover:-translate-y-1 transition-all duration-300 flex items-center gap-3"
           >
             <Plus className="w-5 h-5 transition-transform group-hover:rotate-90" />
@@ -183,7 +261,6 @@ export default function Dashboard() {
             <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl blur opacity-0 group-hover:opacity-50 transition-opacity duration-300"></div>
           </button>
 
-          
           <div className="relative flex-1">
             <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
             <input
@@ -195,23 +272,31 @@ export default function Dashboard() {
             />
           </div>
 
-      
-          <div className="relative">
-            <Filter className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+          <div className="relative min-w-[200px]">
+            <Filter className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 pointer-events-none z-10" />
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="pl-12 pr-8 py-4 rounded-2xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300 bg-white/80 backdrop-blur-sm appearance-none cursor-pointer"
+              className="w-full pl-12 pr-8 py-4 rounded-2xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300 bg-white/80 backdrop-blur-sm appearance-none cursor-pointer relative z-0"
             >
-              {categories.map(category => (
-                <option key={category} value={category}>{category}</option>
+              {categories.map((category) => (
+                <option key={category} value={category}>
+                  {/* Prepend the icon to the category name */}
+                  {getTransactionIcon(category)} {category}
+                </option>
               ))}
             </select>
+            {/* Add custom dropdown arrow */}
+            <ChevronDown className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 pointer-events-none z-10" />
           </div>
         </div>
 
-       
-        <div className={`transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`} style={{ animationDelay: '1s' }}>
+        <div
+          className={`transition-all duration-1000 ${
+            isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+          }`}
+          style={{ animationDelay: "1s" }}
+        >
           <h3 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-3">
             <div className="w-1 h-8 bg-gradient-to-b from-blue-500 to-purple-500 rounded-full"></div>
             Recent Transactions
@@ -229,11 +314,13 @@ export default function Dashboard() {
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
-                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-xl ${
-                      transaction.type === 'Income' 
-                        ? 'bg-green-100 text-green-600' 
-                        : 'bg-red-100 text-red-600'
-                    } group-hover:scale-110 transition-transform duration-300`}>
+                    <div
+                      className={`w-12 h-12 rounded-2xl flex items-center justify-center text-xl ${
+                        transaction.type === "Income"
+                          ? "bg-green-100 text-green-600"
+                          : "bg-red-100 text-red-600"
+                      } group-hover:scale-110 transition-transform duration-300`}
+                    >
                       {getTransactionIcon(transaction.category)}
                     </div>
                     <div>
@@ -245,17 +332,22 @@ export default function Dashboard() {
                         {transaction.category}
                         <Calendar className="w-4 h-4 ml-2" />
                         {(() => {
-                          const [dd, mm, yyyy] = transaction.date.split('/');
+                          const [dd, mm, yyyy] = transaction.date.split("/");
                           return `${dd}/${mm}/${yyyy}`;
                         })()}
                       </div>
                     </div>
                   </div>
                   <div className="text-right flex items-center justify-end">
-                    <div className={`text-2xl font-black ${
-                      transaction.type === 'Expense' ? 'text-red-600' : 'text-green-600'
-                    } group-hover:scale-110 transition-transform duration-300`}>
-                      {transaction.type === 'Expense' ? '-' : '+'}{formatCurrency(transaction.amount)}
+                    <div
+                      className={`text-2xl font-black ${
+                        transaction.type === "Expense"
+                          ? "text-red-600"
+                          : "text-green-600"
+                      } group-hover:scale-110 transition-transform duration-300`}
+                    >
+                      {transaction.type === "Expense" ? "-" : "+"}
+                      {formatCurrency(transaction.amount)}
                     </div>
                     <button
                       onClick={() => handleDelete(transaction.id)}
@@ -266,16 +358,22 @@ export default function Dashboard() {
                     </button>
                   </div>
                 </div>
-                
-              
+
                 <div className="mt-4 h-1 bg-gray-100 rounded-full overflow-hidden">
-                  <div 
+                  <div
                     className={`h-full rounded-full transition-all duration-1000 ${
-                      transaction.type === 'Income' ? 'bg-green-400' : 'bg-red-400'
+                      transaction.type === "Income"
+                        ? "bg-green-400"
+                        : "bg-red-400"
                     }`}
-                    style={{ 
-                      width: `${Math.min((transaction.amount / Math.max(...transactions.map(t => t.amount))) * 100, 100)}%`,
-                      animationDelay: `${1.5 + index * 0.1}s`
+                    style={{
+                      width: `${Math.min(
+                        (transaction.amount /
+                          Math.max(...transactions.map((t) => t.amount))) *
+                          100,
+                        100
+                      )}%`,
+                      animationDelay: `${1.5 + index * 0.1}s`,
                     }}
                   ></div>
                 </div>
@@ -289,29 +387,47 @@ export default function Dashboard() {
                 <Search className="w-8 h-8 text-gray-400" />
               </div>
               <p className="text-gray-500 text-lg">No transactions found</p>
-              <p className="text-gray-400">Try adjusting your search or filters</p>
+              <p className="text-gray-400">
+                Try adjusting your search or filters
+              </p>
             </div>
           )}
         </div>
-
+        
         <AddTransactionModal showModal={showModal} setShowModal={setShowModal} />
+        <ConfirmationModal show={showDeleteModal} onClose={() => setShowDeleteModal(false)} onConfirm={handleConfirmDelete} title={"Confirm Deletion"} message={'Are you sure you want to delete this transaction? This action cannot be undone.'} />
+
       </div>
 
-      
       <style jsx>{`
         @keyframes expandWidth {
-          from { transform: scaleX(0); }
-          to { transform: scaleX(1); }
+          from {
+            transform: scaleX(0);
+          }
+          to {
+            transform: scaleX(1);
+          }
         }
         @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
         }
         @keyframes slideUp {
-          from { transform: translateY(20px); opacity: 0; }
-          to { transform: translateY(0); opacity: 1; }
+          from {
+            transform: translateY(20px);
+            opacity: 0;
+          }
+          to {
+            transform: translateY(0);
+            opacity: 1;
+          }
         }
       `}</style>
+      <Footer />
     </div>
   );
 }
