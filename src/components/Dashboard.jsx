@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import AddTransactionModal from "./AddTransactionModal";
 import {
   Plus,
@@ -17,10 +16,8 @@ import {
 } from "lucide-react";
 import { useTransactions } from "./TransactionContext";
 import { useState, useEffect } from 'react';
-import AddTransactionModal from './AddTransactionModal';
 import ConfirmationModal from './ConfirmationModal';
-import { Plus, TrendingUp, TrendingDown, Wallet, IndianRupee, Calendar, Tag, Filter, Search, Eye, EyeOff, Trash2 } from 'lucide-react';
-import { useTransactions } from './TransactionContext';
+
 import Footer from './Footer';
 
 export default function Dashboard() {
