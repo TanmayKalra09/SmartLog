@@ -1,6 +1,6 @@
-import { Plus, TrendingUp, TrendingDown, Wallet, IndianRupee, Calendar, Tag, Filter, Search, Eye, EyeOff, ChevronDown, Trash2, Download, Moon, Sun } from "lucide-react";
-
+import { Plus, TrendingUp, TrendingDown, Wallet, IndianRupee, Calendar, Tag, Filter, Search, Eye, EyeOff, ChevronDown,ChevronLeft,ChevronRight, Trash2, Download, Moon, Sun } from "lucide-react";
 import { useTransactions } from "./TransactionContext";
+import { useCurrency } from "./CurrencyContext";
 import { useState, useEffect } from "react";
 import AddTransactionModal from "./AddTransactionModal";
 import ConfirmationModal from "./ConfirmationModal";
@@ -17,11 +17,38 @@ export default function Dashboard() {
   const [isVisible, setIsVisible] = useState(false);
   const [hoveredCard, setHoveredCard] = useState(null);
   const [showBalance, setShowBalance] = useState(true);
-  const [animatedValues, setAnimatedValues] = useState({
-    income: 0,
-    expense: 0,
-    balance: 0,
-  });
+
+
+  const [animatedValues, setAnimatedValues] = useState({ income: 0, expense: 0, balance: 0 });
+  const { currency, locale, setCurrency, setLocale } = useCurrency();
+   const currencies = [
+  { code: "INR", locale: "en-IN" },
+  { code: "USD", locale: "en-US" },
+  { code: "EUR", locale: "de-DE" },
+  { code: "BRL", locale: "pt-BR" },
+  { code: "JPY", locale: "ja-JP" },
+];
+
+  const currentIndex = currencies.findIndex((c) => c.code === currency);
+
+  const handleChange = (direction) => {
+    const newIndex =
+      direction === "next"
+        ? (currentIndex + 1) % currencies.length
+        : (currentIndex - 1 + currencies.length) % currencies.length;
+
+    const next = currencies[newIndex];
+    setCurrency(next.code);
+    setLocale(next.locale);
+  };
+
+  const symbol = (0).toLocaleString(locale, {
+    style: "currency",
+    currency,
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).replace(/\d/g, "").trim();
+
   const [darkMode, setDarkMode] = useState(false);
 
   // Toggle dark mode
@@ -89,10 +116,10 @@ export default function Dashboard() {
     return matchesSearch && matchesCategory;
   });
 
-  const formatCurrency = amount => {
-    return new Intl.NumberFormat("en-IN", {
+  const formatCurrency = (amount) => {
+    return new Intl.NumberFormat(locale, {
       style: "currency",
-      currency: "INR",
+      currency,
       minimumFractionDigits: 0,
     }).format(amount);
   };
@@ -276,6 +303,27 @@ export default function Dashboard() {
               </select>
               <ChevronDown className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 pointer-events-none z-10" />
             </div>
+            <div className={`${
+                darkMode ? "flex items-center gap-3 bg-gray-800 backdrop-blur-md px-4 py-2 rounded-xl border border-gray-700" : "flex items-center gap-3 bg-white/70 backdrop-blur-md px-4 py-2 rounded-xl border border-gray-200"
+              }`}>
+            <button
+              onClick={() => handleChange("prev")}
+              className="p-1 rounded hover:bg-gray-200 active:bg-gray-300 transition"
+              aria-label="Previous currency"
+            >
+              <ChevronLeft size={20} className="text-gray-400" />
+            </button>
+            <span className="text-xl text-green-600 text-center select-none">
+              {symbol}
+            </span>
+            <button
+              onClick={() => handleChange("next")}
+              className="p-1 rounded hover:bg-gray-200 active:bg-gray-300 transition"
+              aria-label="Next currency"
+            >
+              <ChevronRight size={20} className="text-gray-400" />
+            </button>
+          </div>
           </div>
 
           <div className={`transition-all duration-1000 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`} style={{ animationDelay: "1s" }}>

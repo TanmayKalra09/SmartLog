@@ -6,8 +6,10 @@ const formatDate = date => {
   return `${day}/${month}/${year}`;
 };
 
-import { useState, useEffect } from "react";
-import { useTransactions } from "./TransactionContext";
+import { useState, useEffect } from 'react';
+import { useCurrency } from "./CurrencyContext";
+import { useTransactions } from './TransactionContext';
+import toast from 'react-hot-toast';
 
 export default function AddTransactionModal({ showModal = true, setShowModal = () => {}, darkMode = false }) {
   const { addTransaction } = useTransactions();
@@ -20,7 +22,17 @@ export default function AddTransactionModal({ showModal = true, setShowModal = (
   });
   const [isVisible, setIsVisible] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { currency, locale, setCurrency, setLocale } = useCurrency();
   const [errors, setErrors] = useState({});
+
+  const getCurrencySymbol = (currency, locale) => {
+    return (0).toLocaleString(locale, {
+      style: "currency",
+      currency,
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).replace(/\d/g, "").trim();
+  };
 
   useEffect(() => {
     if (showModal) {
@@ -52,7 +64,7 @@ export default function AddTransactionModal({ showModal = true, setShowModal = (
       id: Date.now(),
       amount: parseFloat(form.amount),
     });
-
+toast.success('Transaction Added Successfully!');
     setForm({
       amount: "",
       category: "",
@@ -125,7 +137,8 @@ export default function AddTransactionModal({ showModal = true, setShowModal = (
             <div className="space-y-2">
               <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">Amount</label>
               <div className="relative">
-                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400 font-medium">₹</span>
+                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 font-medium">{getCurrencySymbol(currency,locale)}</span>
+
                 <input
                   type="number"
                   step="0.01"

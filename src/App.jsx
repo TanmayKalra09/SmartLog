@@ -2,18 +2,33 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import HomePage from './components/HomePage';
 import Dashboard from './components/Dashboard';
 import { TransactionProvider } from './components/TransactionContext';
+
 import VisualReports from './components/VisualReports';
 
+import { Toaster } from 'react-hot-toast';
+import { CurrencyProvider } from "./components/CurrencyContext";
+import AboutPage from './components/AboutPage';
+import ContactPage from './components/ContactPage';
+
+
 export default function App() {
+
   return (
     <TransactionProvider>
-      <Router>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/reports" element={<VisualReports/>} />
-        </Routes>
-      </Router>
+
+
+      <CurrencyProvider>
+        <Router>
+          <Toaster />
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/dashboard" element={<Dashboard/>} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+              <Route path="/reports" element={<VisualReports/>} />
+          </Routes>
+        </Router>
+      </CurrencyProvider>
     </TransactionProvider>
   );
 }
