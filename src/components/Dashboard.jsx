@@ -1,4 +1,4 @@
-import { Plus, TrendingUp, TrendingDown, Wallet, IndianRupee, Calendar, Tag, Filter, Search, Eye, EyeOff, ChevronDown,ChevronLeft,ChevronRight, Trash2, Download, Moon, Sun } from "lucide-react";
+import { Plus, TrendingUp, TrendingDown, Wallet, IndianRupee, Calendar, Tag, Filter, Search, Eye, EyeOff, ChevronDown,ChevronLeft,ChevronRight, Trash2, Download, Moon, Sun, ChevronUp } from "lucide-react";
 import { useTransactions } from "./TransactionContext";
 import { useCurrency } from "./CurrencyContext";
 import { useState, useEffect } from "react";
@@ -17,7 +17,7 @@ export default function Dashboard() {
   const [isVisible, setIsVisible] = useState(false);
   const [hoveredCard, setHoveredCard] = useState(null);
   const [showBalance, setShowBalance] = useState(true);
-
+  const [showScrollTop, setShowScrollTop] = useState(false);
 
   const [animatedValues, setAnimatedValues] = useState({ income: 0, expense: 0, balance: 0 });
   const { currency, locale, setCurrency, setLocale } = useCurrency();
@@ -64,6 +64,23 @@ export default function Dashboard() {
       document.documentElement.classList.remove('dark');
     }
   }, [darkMode]);
+
+  // Scroll to top functionality
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowScrollTop(window.scrollY > 300);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  };
 
   const balance = income - expense;
   const defaultCategories = ["Food", "Entertainment", "Utilities", "Income", "Transport", "Shopping", "Health", "Education"];
@@ -466,8 +483,26 @@ export default function Dashboard() {
           </div>
         </div>
       </main>
-      <Footer />
 
+      {/* Scroll to Top Button */}
+      <button
+        onClick={scrollToTop}
+        className={`fixed bottom-24 right-6 z-50 p-4 rounded-full shadow-lg transform transition-all duration-500 ease-in-out ${
+          showScrollTop
+            ? "translate-y-0 opacity-100 scale-100"
+            : "translate-y-16 opacity-0 scale-75 pointer-events-none"
+        } ${
+          darkMode
+            ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-500 hover:to-purple-500 shadow-blue-900/25"
+            : "bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-500 hover:to-purple-500 shadow-blue-200"
+        } hover:scale-110 hover:-translate-y-1 group`}
+        aria-label="Scroll to top"
+      >
+        <ChevronUp className="w-6 h-6 transition-transform duration-300 group-hover:-translate-y-0.5" />
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full blur opacity-0 group-hover:opacity-50 transition-opacity duration-300"></div>
+      </button>
+
+      <Footer />
 
       <AddTransactionModal showModal={showModal} setShowModal={setShowModal} darkMode={darkMode} />
       <ConfirmationModal 
