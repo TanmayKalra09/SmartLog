@@ -60,11 +60,11 @@ If you'd like to contribute or customize Smart Tracker for your own use:
 2. Clone your forked version:
 
 ```bash
-git clone https://github.com/your-username/expense-tracker.git
+git clone https://github.com/your-username/SmartLog.git
 ```
 ## Install dependencies and start the development server
 ```bash
-cd expense-tracker
+cd SmartLog
 npm install
 npm run dev
 ```

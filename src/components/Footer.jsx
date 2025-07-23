@@ -22,7 +22,7 @@ const Footer = () => {
         {/* Social Media Icons */}
         <div className="flex items-center gap-4">
           <a
-            href=""
+            href="https://github.com/TanmayKalra09"
             target="_blank"
             rel="noopener noreferrer"
             className="hover:text-white"
@@ -30,7 +30,7 @@ const Footer = () => {
             <FaGithub size={20} />
           </a>
           <a
-            href=""
+            href="https://www.instagram.com/tanmaykalraa/"
             target="_blank"
             rel="noopener noreferrer"
             className="hover:text-white"
