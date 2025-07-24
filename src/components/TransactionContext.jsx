@@ -4,102 +4,67 @@ const TransactionContext = createContext();
 
 export const useTransactions = () => useContext(TransactionContext);
 
-const getTodaysDate = () => {
-  const d = new Date();
-  const day = String(d.getDate()).padStart(2, "0");
-  const month = String(d.getMonth() + 1).padStart(2, "0");
-  const year = d.getFullYear();
-  return `${day}/${month}/${year}`;
-};
-
 export const TransactionProvider = ({ children }) => {
-  const [transactions, setTransactions] = useState(() => {
-    const saved = localStorage.getItem('transactions');
-    return saved ? JSON.parse(saved) : [];
+  const [categories, setCategories] = useState(() => {
+    const savedCategories = localStorage.getItem('categories');
+    if (savedCategories) {
+      return JSON.parse(savedCategories);
+    } else {
+      return [
+        { id: 'cat0', name: 'Uncategorized' },
+        { id: 'cat1', name: 'Food' },
+        { id: 'cat2', name: 'Transport' },
+        { id: 'cat3', name: 'Bills' },
+        { id: 'cat4', name: 'Entertainment' },
+      ];
+    }
   });
 
-  const [goals, setGoals] = useState(() => {
-    const saved = localStorage.getItem('goals');
-    return saved ? JSON.parse(saved) : [];
-  })
+  const [transactions, setTransactions] = useState(() => {
+    const savedTransactions = localStorage.getItem('transactions');
+    return savedTransactions ? JSON.parse(savedTransactions) : [];
+  });
+
+  useEffect(() => {
+    localStorage.setItem('categories', JSON.stringify(categories));
+  }, [categories]);
 
   useEffect(() => {
     localStorage.setItem('transactions', JSON.stringify(transactions));
   }, [transactions]);
 
-  useEffect(() => {
-    localStorage.setItem('goals', JSON.stringify(goals));
-  }, [goals]);
+  const addCategory = (name) => {
+    if (name && !categories.find(c => c.name.toLowerCase() === name.toLowerCase())) {
+      const newCategory = { id: `cat${Date.now()}`, name: name };
+      setCategories([...categories, newCategory]);
+    }
+  };
+
+  const updateCategory = (id, newName) => {
+    setCategories(categories.map((cat) => cat.id === id ? { ...cat, name: newName } : cat));
+  };
+
+  const deleteCategory = (id) => {
+    if (id === 'cat0') return;
+    setTransactions(transactions.map(t => t.categoryId === id ? {...t, categoryId: 'cat0'} : t));
+    setCategories(categories.filter((cat) => cat.id !== id));
+  };
 
   const addTransaction = (transaction) => {
     setTransactions([transaction, ...transactions]);
   };
-
-  const addGoal = (goal) => {
-    setGoals([goal, ...goals]);
-  }
-
-  const deleteTransaction = (transactionId) => {
-    // 1. Find the transaction to be deleted
-    const transactionToDelete = transactions.find(t => t.id === transactionId);
-
-    if (!transactionToDelete) return; // Exit if transaction not found
-
-    // 2. Check if it was a contribution to a goal
-    if (transactionToDelete.goalId) {
-      // 3. If yes, "refund" the amount from the goal
-      const updatedGoals = goals.map(goal => {
-        if (goal.id === transactionToDelete.goalId) {
-          return {
-            ...goal,
-            currentAmount: goal.currentAmount - transactionToDelete.amount
-          };
-        }
-        return goal;
-      });
-      setGoals(updatedGoals);
-    }
-
-    // 4. Finally, delete the transaction itself
-    setTransactions(prev => prev.filter(t => t.id !== transactionId));
+  
+  const deleteTransaction = (id) => {
+    setTransactions(transactions.filter((t) => t.id !== id));
   };
-
-  const income = transactions
-    .filter(t => t.type === 'Income')
-    .reduce((sum, t) => sum + Number(t.amount), 0);
-
-  const expense = transactions
-    .filter(t => t.type === 'Expense')
-    .reduce((sum, t) => sum + Number(t.amount), 0);
-
-  const contributeToGoal = (goalId, amount) => {
-      let goalName = '';
-
-      const updatedGoals = goals.map(goal => {
-        if (goal.id === goalId) {
-          goalName = goal.name; 
-          return { ...goal, currentAmount: goal.currentAmount + amount };
-        }
-        return goal;
-      });
-      setGoals(updatedGoals);
-
-      const contributionTransaction = {
-        id: Date.now(),
-        note: `Contribution to "${goalName}"`,
-        amount: amount,
-        type: 'Expense',
-        category: 'Savings',
-        date: getTodaysDate(),
-        goalId: goalId
-      };
-      addTransaction(contributionTransaction);
-    };
+  
+  const income = transactions.filter(t => t.type === 'Income').reduce((sum, t) => sum + Number(t.amount), 0);
+  const expense = transactions.filter(t => t.type === 'Expense').reduce((sum, t) => sum + Number(t.amount), 0);
+  
+  const value = { transactions, addTransaction, deleteTransaction, income, expense, categories, addCategory, updateCategory, deleteCategory };
 
   return (
-    <TransactionContext.Provider
-      value={{ transactions, setTransactions, addTransaction, income, expense, deleteTransaction, goals, setGoals, addGoal, contributeToGoal }}
-    >
+    <TransactionContext.Provider value={value}>
       {children}
     </TransactionContext.Provider>
   );
