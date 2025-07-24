@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
-import { useTransactions } from './TransactionContext';
+import { useTransactions, useCurrency } from './TransactionContext';
 import { Calendar, ChevronDown } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 const defaultCategories = [
   "Food",
@@ -25,6 +26,7 @@ const formatDate = (date) => {
 
 export default function AddTransactionModal({ showModal = true, setShowModal = () => {}, darkMode = false }) {
   const { addTransaction, transactions } = useTransactions();
+  const { currency, locale } = useCurrency();
   const [form, setForm] = useState({
     amount: '',
     category: '',
@@ -46,6 +48,15 @@ export default function AddTransactionModal({ showModal = true, setShowModal = (
   const existingCategories = [...new Set(transactions.map(t => t.category))];
   const allCategories = [...defaultCategories, ...existingCategories.filter(c => !defaultCategories.includes(c))];
   const categories = [...new Set(allCategories)].sort();
+
+  const getCurrencySymbol = () => {
+    return (0).toLocaleString(locale, {
+      style: 'currency',
+      currency,
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).replace(/\d/g, '').trim();
+  };
 
   useEffect(() => {
     if (showModal) {
@@ -88,6 +99,7 @@ export default function AddTransactionModal({ showModal = true, setShowModal = (
       id: Date.now(),
       amount: parseFloat(form.amount)
     });
+    toast.success('Transaction Added Successfully!');
     
     setForm({
       amount: '',
@@ -276,7 +288,9 @@ export default function AddTransactionModal({ showModal = true, setShowModal = (
             <div className="space-y-2">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Amount</label>
               <div className="relative">
-                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400">₹</span>
+                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400">
+                  {getCurrencySymbol()}
+                </span>
                 <input
                   type="text"
                   inputMode="decimal"
