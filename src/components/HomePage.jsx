@@ -31,11 +31,31 @@ export default function HomePage() {
   };
 
   const features = [
-    { icon: IndianRupee, title: 'Track Expenses', desc: 'Monitor every rupee', color: 'from-green-400 to-blue-500' },
-    { icon: TrendingUp, title: 'Smart Analytics', desc: 'Insights that matter', color: 'from-blue-400 to-purple-500' },
-    { icon: PieChart, title: 'Visual Reports', desc: 'See your spending', color: 'from-purple-400 to-pink-500' },
-    { icon: BarChart3, title: 'Budget Goals', desc: 'Stay on track', color: 'from-pink-400 to-red-500' }
-  ];
+  {
+    icon: IndianRupee,
+    title: 'Track Expenses',
+    desc: 'Log every income and expense with categories. Get a full picture of your spending habits.',
+    color: 'from-green-400 to-blue-500'
+  },
+  {
+    icon: TrendingUp,
+    title: 'Smart Analytics',
+    desc: 'AI-powered insights reveal trends, unusual spending, and opportunities to save.',
+    color: 'from-blue-400 to-purple-500'
+  },
+  {
+    icon: PieChart,
+    title: 'Visual Reports',
+    desc: 'Clear graphs and charts show how you spend, save, and manage your money.',
+    color: 'from-purple-400 to-pink-500'
+  },
+  {
+    icon: BarChart3,
+    title: 'Budget Goals',
+    desc: 'Set financial goals, track your progress, and stay motivated with alerts.',
+    color: 'from-pink-400 to-red-500'
+  }
+];
 
   return (
     <div className="relative min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 overflow-hidden">
