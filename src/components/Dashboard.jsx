@@ -22,15 +22,53 @@ export default function Dashboard() {
 
   const [animatedValues, setAnimatedValues] = useState({ income: 0, expense: 0, balance: 0 });
   const { currency, locale, setCurrency, setLocale } = useCurrency();
+  const [showCurrencySearch, setShowCurrencySearch] = useState(false);
+  const [currencySearchTerm, setCurrencySearchTerm] = useState("");
+  
   const currencies = [
-    { code: "INR", locale: "en-IN" },
-    { code: "USD", locale: "en-US" },
-    { code: "EUR", locale: "de-DE" },
-    { code: "BRL", locale: "pt-BR" },
-    { code: "JPY", locale: "ja-JP" },
+    { code: "INR", locale: "en-IN", name: "Indian Rupee" },
+    { code: "USD", locale: "en-US", name: "US Dollar" },
+    { code: "EUR", locale: "de-DE", name: "Euro" },
+    { code: "BRL", locale: "pt-BR", name: "Brazilian Real" },
+    { code: "JPY", locale: "ja-JP", name: "Japanese Yen" },
+    { code: "GBP", locale: "en-GB", name: "British Pound" },
+    { code: "CAD", locale: "en-CA", name: "Canadian Dollar" },
+    { code: "AUD", locale: "en-AU", name: "Australian Dollar" },
+    { code: "CHF", locale: "de-CH", name: "Swiss Franc" },
+    { code: "CNY", locale: "zh-CN", name: "Chinese Yuan" },
+    { code: "KRW", locale: "ko-KR", name: "South Korean Won" },
+    { code: "SGD", locale: "en-SG", name: "Singapore Dollar" },
+    { code: "HKD", locale: "en-HK", name: "Hong Kong Dollar" },
+    { code: "SEK", locale: "sv-SE", name: "Swedish Krona" },
+    { code: "NOK", locale: "nb-NO", name: "Norwegian Krone" },
+    { code: "DKK", locale: "da-DK", name: "Danish Krone" },
+    { code: "PLN", locale: "pl-PL", name: "Polish Zloty" },
+    { code: "RUB", locale: "ru-RU", name: "Russian Ruble" },
+    { code: "TRY", locale: "tr-TR", name: "Turkish Lira" },
+    { code: "MXN", locale: "es-MX", name: "Mexican Peso" },
+    { code: "ZAR", locale: "en-ZA", name: "South African Rand" },
+    { code: "NZD", locale: "en-NZ", name: "New Zealand Dollar" },
+    { code: "THB", locale: "th-TH", name: "Thai Baht" },
+    { code: "MYR", locale: "ms-MY", name: "Malaysian Ringgit" },
+    { code: "AED", locale: "ar-AE", name: "UAE Dirham" },
+    { code: "SAR", locale: "ar-SA", name: "Saudi Riyal" },
+    { code: "ILS", locale: "he-IL", name: "Israeli Shekel" },
+    { code: "CZK", locale: "cs-CZ", name: "Czech Koruna" },
   ];
 
   const currentIndex = currencies.findIndex((c) => c.code === currency);
+
+  const filteredCurrencies = currencies.filter(curr => 
+    curr.name.toLowerCase().includes(currencySearchTerm.toLowerCase()) ||
+    curr.code.toLowerCase().includes(currencySearchTerm.toLowerCase())
+  );
+
+  const handleCurrencySelect = (selectedCurrency) => {
+    setCurrency(selectedCurrency.code);
+    setLocale(selectedCurrency.locale);
+    setShowCurrencySearch(false);
+    setCurrencySearchTerm("");
+  };
 
   const handleChange = (direction) => {
     const newIndex =
@@ -307,7 +345,7 @@ export default function Dashboard() {
               </select>
               <ChevronDown className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 pointer-events-none z-10" />
             </div>
-            <div className={`${darkMode ? "flex items-center gap-3 bg-gray-800 backdrop-blur-md px-4 py-2 rounded-xl border border-gray-700" : "flex items-center gap-3 bg-white/70 backdrop-blur-md px-4 py-2 rounded-xl border border-gray-200"
+            <div className={`relative ${darkMode ? "flex items-center gap-3 bg-gray-800 backdrop-blur-md px-4 py-2 rounded-xl border border-gray-700" : "flex items-center gap-3 bg-white/70 backdrop-blur-md px-4 py-2 rounded-xl border border-gray-200"
               }`}>
               <button
                 onClick={() => handleChange("prev")}
@@ -316,9 +354,13 @@ export default function Dashboard() {
               >
                 <ChevronLeft size={20} className="text-gray-400" />
               </button>
-              <span className="text-xl text-green-600 text-center select-none">
+              <button
+                onClick={() => setShowCurrencySearch(!showCurrencySearch)}
+                className="text-xl text-green-600 text-center select-none hover:bg-gray-100 px-2 py-1 rounded transition-colors"
+                title="Click to search currencies"
+              >
                 {symbol}
-              </span>
+              </button>
               <button
                 onClick={() => handleChange("next")}
                 className="p-1 rounded hover:bg-gray-200 active:bg-gray-300 transition"
@@ -326,6 +368,39 @@ export default function Dashboard() {
               >
                 <ChevronRight size={20} className="text-gray-400" />
               </button>
+
+              {/* Currency Search Dropdown */}
+              {showCurrencySearch && (
+                <div className={`absolute top-full left-0 right-0 mt-2 ${darkMode ? "bg-gray-800 border border-gray-700" : "bg-white border border-gray-200"} rounded-xl shadow-lg z-50 max-h-64 overflow-hidden`}>
+                  <div className="p-3 border-b border-gray-200 dark:border-gray-700">
+                    <input
+                      type="text"
+                      placeholder="Search currency..."
+                      value={currencySearchTerm}
+                      onChange={(e) => setCurrencySearchTerm(e.target.value)}
+                      className={`w-full px-3 py-2 rounded-lg border focus:ring-2 focus:ring-blue-500 outline-none ${darkMode ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400" : "bg-gray-50 border-gray-300 text-gray-900 placeholder-gray-500"}`}
+                      autoFocus
+                    />
+                  </div>
+                  <div className="max-h-48 overflow-y-auto">
+                    {filteredCurrencies.map((curr) => (
+                      <button
+                        key={curr.code}
+                        onClick={() => handleCurrencySelect(curr)}
+                        className={`w-full px-4 py-3 text-left hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center justify-between transition-colors ${currency === curr.code ? "bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400" : ""}`}
+                      >
+                        <span className="font-medium">{curr.code}</span>
+                        <span className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-500"}`}>{curr.name}</span>
+                      </button>
+                    ))}
+                    {filteredCurrencies.length === 0 && (
+                      <div className={`px-4 py-3 text-center ${darkMode ? "text-gray-400" : "text-gray-500"}`}>
+                        No currencies found
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
