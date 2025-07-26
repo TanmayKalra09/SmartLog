@@ -177,7 +177,10 @@ export default function HomePage() {
                     <Icon className="w-6 h-6 text-white" />
                   </div>
                   <h3 className="font-bold text-white mb-2 text-sm md:text-base">{feature.title}</h3>
-                  <p className="text-xs md:text-sm text-gray-400 group-hover:text-gray-300 transition-colors duration-300">{feature.desc}</p>
+                 <p className="text-xs md:text-sm text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300 max-h-0 group-hover:max-h-40 overflow-hidden transition-[max-height] duration-300">
+  {feature.desc}
+</p>
+
 
 
                   <div className={`mt-3 h-0.5 bg-gradient-to-r ${feature.color} rounded-full transform transition-all duration-300 ${isHovered ? 'scale-x-100' : 'scale-x-0'}`}></div>
