@@ -2,9 +2,9 @@ import { useState, useEffect } from 'react';
 import AddTransactionModal from './AddTransactionModal';
 import { Plus, TrendingUp, TrendingDown, Wallet, IndianRupee, Calendar, Tag, Filter, Search, Eye, EyeOff, Trash2 } from 'lucide-react';
 import { useTransactions } from './TransactionContext';
-
+import { FaTrashAlt } from "react-icons/fa";
 export default function Dashboard() {
-  const { transactions, income, expense, setTransactions } = useTransactions();
+  const { transactions, income, expense,deleteTransaction } = useTransactions();
   const [showModal, setShowModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
@@ -16,9 +16,26 @@ export default function Dashboard() {
   const balance = income - expense;
   const categories = ['All', ...new Set(transactions.map(t => t.category))];
 
-  const handleDelete = (id) => {
-    setTransactions(prev => prev.filter(t => t.id !== id));
-  };
+const [showDeleteModal, setShowDeleteModal] = useState(false);
+const [transactionToDelete, setTransactionToDelete] = useState(null);
+
+// When user clicks delete
+const handleDeleteClick = (id) => {
+  setTransactionToDelete(id);
+  setShowDeleteModal(true);
+};
+
+// When user confirms delete
+const confirmDelete = () => {
+  if (transactionToDelete) {
+    deleteTransaction(transactionToDelete);
+    setTransactionToDelete(null);
+  }
+  setShowDeleteModal(false);
+};
+
+
+  
 
 
   useEffect(() => {
@@ -257,13 +274,15 @@ export default function Dashboard() {
                     } group-hover:scale-110 transition-transform duration-300`}>
                       {transaction.type === 'Expense' ? '-' : '+'}{formatCurrency(transaction.amount)}
                     </div>
-                    <button
-                      onClick={() => handleDelete(transaction.id)}
-                      className="ml-2 text-gray-400 hover:text-red-600 transition-colors"
-                      title="Delete"
-                    >
-                      <Trash2 className="w-5 h-5" />
-                    </button>
+                   <button
+  onClick={() => handleDeleteClick(transaction.id)}
+  className="text-red-500 hover:text-red-700 transition duration-200 p-2 rounded-full hover:bg-red-100"
+  title="Delete Transaction"
+>
+  <FaTrashAlt size={18} />
+</button>
+
+
                   </div>
                 </div>
                 
@@ -295,6 +314,29 @@ export default function Dashboard() {
         </div>
 
         <AddTransactionModal showModal={showModal} setShowModal={setShowModal} />
+        {showDeleteModal && (
+  <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+    <div className="bg-white rounded-2xl shadow-2xl p-6 max-w-sm w-full text-center">
+      <h3 className="text-xl font-semibold mb-4">Are you sure?</h3>
+      <p className="text-gray-500 mb-6">Do you really want to delete this transaction?</p>
+      <div className="flex justify-center gap-4">
+        <button
+          onClick={() => setShowDeleteModal(false)}
+          className="px-6 py-2 rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-100"
+        >
+          Cancel
+        </button>
+        <button
+          onClick={confirmDelete}
+          className="px-6 py-2 rounded-xl bg-red-600 text-white hover:bg-red-700"
+        >
+          Delete
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
       </div>
 
       
