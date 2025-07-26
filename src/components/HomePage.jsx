@@ -31,11 +31,31 @@ export default function HomePage() {
   };
 
   const features = [
-    { icon: IndianRupee, title: 'Track Expenses', desc: 'Monitor every rupee', color: 'from-green-400 to-blue-500' },
-    { icon: TrendingUp, title: 'Smart Analytics', desc: 'Insights that matter', color: 'from-blue-400 to-purple-500' },
-    { icon: PieChart, title: 'Visual Reports', desc: 'See your spending', color: 'from-purple-400 to-pink-500' },
-    { icon: BarChart3, title: 'Budget Goals', desc: 'Stay on track', color: 'from-pink-400 to-red-500' }
-  ];
+  {
+    icon: IndianRupee,
+    title: 'Track Expenses',
+    desc: 'Log every income and expense with categories. Get a full picture of your spending habits.',
+    color: 'from-green-400 to-blue-500'
+  },
+  {
+    icon: TrendingUp,
+    title: 'Smart Analytics',
+    desc: 'AI-powered insights reveal trends, unusual spending, and opportunities to save.',
+    color: 'from-blue-400 to-purple-500'
+  },
+  {
+    icon: PieChart,
+    title: 'Visual Reports',
+    desc: 'Clear graphs and charts show how you spend, save, and manage your money.',
+    color: 'from-purple-400 to-pink-500'
+  },
+  {
+    icon: BarChart3,
+    title: 'Budget Goals',
+    desc: 'Set financial goals, track your progress, and stay motivated with alerts.',
+    color: 'from-pink-400 to-red-500'
+  }
+];
 
   return (
     <div className="relative min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 overflow-hidden">
@@ -157,7 +177,10 @@ export default function HomePage() {
                     <Icon className="w-6 h-6 text-white" />
                   </div>
                   <h3 className="font-bold text-white mb-2 text-sm md:text-base">{feature.title}</h3>
-                  <p className="text-xs md:text-sm text-gray-400 group-hover:text-gray-300 transition-colors duration-300">{feature.desc}</p>
+                 <p className="text-xs md:text-sm text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300 max-h-0 group-hover:max-h-40 overflow-hidden transition-[max-height] duration-300">
+  {feature.desc}
+</p>
+
 
 
                   <div className={`mt-3 h-0.5 bg-gradient-to-r ${feature.color} rounded-full transform transition-all duration-300 ${isHovered ? 'scale-x-100' : 'scale-x-0'}`}></div>
