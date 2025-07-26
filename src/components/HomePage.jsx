@@ -31,11 +31,25 @@ export default function HomePage() {
   };
 
   const features = [
+    { icon: PieChart, title: 'Recurring Expenses', desc: 'Fixed monthly costs', color: 'from-yellow-400 to-orange-500' },
     { icon: IndianRupee, title: 'Track Expenses', desc: 'Monitor every rupee', color: 'from-green-400 to-blue-500' },
     { icon: TrendingUp, title: 'Smart Analytics', desc: 'Insights that matter', color: 'from-blue-400 to-purple-500' },
     { icon: PieChart, title: 'Visual Reports', desc: 'See your spending', color: 'from-purple-400 to-pink-500' },
-    { icon: BarChart3, title: 'Budget Goals', desc: 'Stay on track', color: 'from-pink-400 to-red-500' }
+    { icon: BarChart3, title: 'Budget Goals', desc: 'Stay on track', color: 'from-pink-400 to-red-500' },
+    
+
   ];
+  const handleCardClick = (title) => {
+    switch (title) {
+      case "Recurring Expenses":
+        navigate("/dashboard/recurring-expenses");
+        break;
+      // Add more cases if needed for other cards
+      default:
+        break;
+    }
+  };
+
 
   return (
     <div className="relative min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 overflow-hidden">
@@ -137,11 +151,12 @@ export default function HomePage() {
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16 max-w-5xl">
             {features.map((feature, index) => {
+
               const Icon = feature.icon;
               const isHovered = hoveredFeature === index;
               return (
                 <div
-                  key={index}
+                  key={index} onClick={() => handleCardClick(feature.title)}
                   className={`group p-6 rounded-3xl backdrop-blur-lg transition-all duration-500 cursor-pointer transform hover:scale-110 hover:-translate-y-2 ${isHovered
                       ? 'bg-white/20 shadow-2xl border border-white/30 shadow-purple-500/20'
                       : 'bg-white/5 hover:bg-white/10 border border-white/10'
