@@ -1,7 +1,7 @@
-const formatDate = date => {
+const formatDate = (date) => {
   const d = new Date(date);
-  const day = String(d.getDate()).padStart(2, "0");
-  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, '0');
+  const month = String(d.getMonth() + 1).padStart(2, '0');
   const year = d.getFullYear();
   return `${day}/${month}/${year}`;
 };
@@ -18,7 +18,7 @@ export default function AddTransactionModal({ showModal = true, setShowModal = (
     category: "",
     type: "Expense",
     date: formatDate(new Date()),
-    note: "",
+    note: " "
   });
   const [isVisible, setIsVisible] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -34,6 +34,7 @@ export default function AddTransactionModal({ showModal = true, setShowModal = (
     }).replace(/\d/g, "").trim();
   };
 
+
   useEffect(() => {
     if (showModal) {
       setIsVisible(true);
@@ -43,7 +44,7 @@ export default function AddTransactionModal({ showModal = true, setShowModal = (
   const validateForm = () => {
     const newErrors = {};
     if (!form.amount || parseFloat(form.amount) <= 0) {
-      newErrors.amount = "Please enter a valid amount";
+     newErrors.amount = "Please enter a valid amount";
     }
     if (!form.category.trim()) {
       newErrors.category = "Category is required";
@@ -52,31 +53,45 @@ export default function AddTransactionModal({ showModal = true, setShowModal = (
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async e => {
+const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
 
     setIsSubmitting(true);
-    await new Promise(resolve => setTimeout(resolve, 800));
+    
+    await new Promise(resolve => setTimeout(resolve, 800)); 
 
-    addTransaction({
-      ...form,
-      id: Date.now(),
-      amount: parseFloat(form.amount),
-    });
-toast.success('Transaction Added Successfully!');
-    setForm({
-      amount: "",
-      category: "",
-      type: "Expense",
-      date: formatDate(new Date()),
-      note: "",
-    });
-    setErrors({});
-    setIsSubmitting(false);
-    handleClose();
+    try {
+      
+      addTransaction({
+        ...form,
+        id: Date.now(),
+        amount: parseFloat(form.amount)
+      });
+
+      
+      toast.success('Transaction Added Successfully!');
+
+      
+      setForm({
+        amount: '',
+        category: '',
+        type: 'Expense',
+        date: formatDate(new Date()),
+        note: ''
+      });
+      handleClose(); 
+
+    } catch (error) {
+      
+      console.error("Failed to add transaction:", error);
+      toast.error('Could not add transaction. Please try again.');
+    } finally {
+      
+      setIsSubmitting(false);
+      setErrors({});
+    }
   };
-
   const handleClose = () => {
     setIsVisible(false);
     setTimeout(() => setShowModal(false), 300);
@@ -84,30 +99,29 @@ toast.success('Transaction Added Successfully!');
 
   const handleInputChange = (field, value) => {
     let newValue = value;
-    if (field === "date") {
+     if (field === "date") {
       newValue = formatDate(value);
     }
     setForm({ ...form, [field]: newValue });
     if (errors[field]) {
-      setErrors({ ...errors, [field]: "" });
+      setErrors({ ...errors, [field]: " " });
     }
   };
 
   if (!showModal) return null;
 
   return (
-
     <div 
-      className={`fixed inset-0 w-full h-screen z-50 overflow-y-auto transition-all duration-300 ${
+          className={`fixed inset-0 w-full h-screen z-50 overflow-y-auto transition-all duration-300 ${
         isVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'
       }`}
       onClick={handleClose}
     >
-      {/* Blurry overlay that shows the dashboard content */}
+            {/* Blurry overlay that shows the dashboard content */}
       <div className={`fixed inset-0 backdrop-blur-sm transition-opacity duration-300 ${
         darkMode ? 'bg-black/30' : 'bg-black/20'
       } ${isVisible ? 'opacity-100' : 'opacity-0'}`}></div>
-      
+
       <div className="flex items-center justify-center min-h-full p-4 py-8 relative">
         <div
           className={`bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-md transform transition-all duration-300 my-auto ${
@@ -115,6 +129,7 @@ toast.success('Transaction Added Successfully!');
           }`}
           onClick={(e) => e.stopPropagation()}
         >
+         
           {/* Modal header */}
           <div className={`bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6 rounded-t-2xl ${
             darkMode ? 'dark:from-blue-800 dark:to-purple-800' : ''
@@ -130,15 +145,13 @@ toast.success('Transaction Added Successfully!');
             </div>
           </div>
 
-
-          {/* Modal body */}
+       
           <div className="p-6 space-y-6">
-            {/* Amount field */}
+           
             <div className="space-y-2">
-              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">Amount</label>
+                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">Amount</label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 font-medium">{getCurrencySymbol(currency,locale)}</span>
-
                 <input
                   type="number"
                   step="0.01"
@@ -155,15 +168,14 @@ toast.success('Transaction Added Successfully!');
               {errors.amount && <p className="text-red-500 dark:text-red-400 text-sm animate-pulse">{errors.amount}</p>}
             </div>
 
-            {/* Category field */}
+
             <div className="space-y-2">
               <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">Category</label>
               <input
                 type="text"
                 value={form.category}
-                onChange={e => handleInputChange("category", e.target.value)}
+                 onChange={e => handleInputChange("category", e.target.value)}
                 className={`w-full px-4 py-3 border-2 rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-
                   errors.category 
                     ? 'border-red-300 bg-red-50 dark:bg-red-900/20 dark:border-red-700' 
                     : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 dark:bg-gray-700 dark:text-white'
@@ -173,7 +185,7 @@ toast.success('Transaction Added Successfully!');
               {errors.category && <p className="text-red-500 dark:text-red-400 text-sm animate-pulse">{errors.category}</p>}
             </div>
 
-            {/* Type selector */}
+    
             <div className="space-y-2">
               <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">Type</label>
               <div className="flex bg-gray-100 dark:bg-gray-700 rounded-xl p-1">
@@ -181,10 +193,9 @@ toast.success('Transaction Added Successfully!');
                   <button
                     key={type}
                     type="button"
-                    onClick={() => handleInputChange("type", type)}
+                     onClick={() => handleInputChange("type", type)}
                     className={`flex-1 py-2 px-4 rounded-lg font-medium transition-all duration-200 ${
                       form.type === type
-
                         ? type === 'Income' 
                           ? 'bg-green-500 text-white shadow-md transform scale-105 dark:bg-green-600'
                           : 'bg-red-500 text-white shadow-md transform scale-105 dark:bg-red-600'
@@ -197,14 +208,14 @@ toast.success('Transaction Added Successfully!');
               </div>
             </div>
 
-            {/* Date field */}
+           
             <div className="space-y-2">
               <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">Date</label>
               <input
                 type="date"
-
                 value={
                   (() => {
+                    
                     const [dd, mm, yyyy] = form.date.split('/');
                     return `${yyyy}-${mm}-${dd}`;
                   })()
@@ -216,13 +227,12 @@ toast.success('Transaction Added Successfully!');
                     : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 dark:bg-gray-700 dark:text-white'
                 }`}
               />
-              {errors.date && <p className="text-red-500 dark:text-red-400 text-sm animate-pulse">{errors.date}</p>}
+               {errors.date && <p className="text-red-500 dark:text-red-400 text-sm animate-pulse">{errors.date}</p>}
             </div>
 
-
-            {/* Note field */}
+            
             <div className="space-y-2">
-              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">Note (Optional)</label>
+               <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">Note (Optional)</label>
               <textarea
                 value={form.note}
                 onChange={e => handleInputChange("note", e.target.value)}
@@ -232,8 +242,7 @@ toast.success('Transaction Added Successfully!');
               />
             </div>
 
-
-            {/* Action buttons */}
+         
             <div className="flex gap-3 pt-4">
               <button
                 type="button"
@@ -248,7 +257,6 @@ toast.success('Transaction Added Successfully!');
                 onClick={handleSubmit}
                 className={`flex-1 px-6 py-3 rounded-xl font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer ${
                   isSubmitting
-
                     ? 'bg-blue-400 dark:bg-blue-500 text-white cursor-not-allowed'
                     : 'bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-700 dark:to-purple-700 text-white hover:from-blue-700 hover:to-purple-700 dark:hover:from-blue-800 dark:hover:to-purple-800 transform hover:scale-105 shadow-lg hover:shadow-xl'
                 }`}
@@ -259,7 +267,7 @@ toast.success('Transaction Added Successfully!');
                     Adding...
                   </div>
                 ) : (
-                  "Add Transaction"
+                   "Add Transaction"
                 )}
               </button>
             </div>
