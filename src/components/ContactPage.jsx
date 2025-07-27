@@ -2,9 +2,8 @@ import React, { useState, useEffect } from 'react';
 import emailjs from 'https://esm.sh/@emailjs/browser';
 import { Send, User, Mail, MessageSquare, BookOpen, CheckCircle, XCircle, MapPin, Phone, Linkedin, Twitter, Github } from 'lucide-react';
 
-// Footer component
+
 const Footer = ({ navigateTo }) => {
-    // A simple footer, can be expanded.
     return (
         <footer className="bg-transparent text-center py-4 text-gray-500 relative z-10">
             <p>&copy; 2024 Your Company. All rights reserved.</p>
@@ -13,51 +12,37 @@ const Footer = ({ navigateTo }) => {
 };
 
 
-// Main App component which includes the ContactPage logic
 export default function App() {
-    // State for managing dark mode. Default is false (light mode).
     const [darkMode, setDarkMode] = useState(false);
     
-    // This is a placeholder for navigation logic.
     const navigateTo = (path) => {
         console.log(`Navigating to ${path}`);
-        // In a real multi-page app, you'd use a router here.
     };
 
-    // The main component structure.
     return (
         <ContactPage darkMode={darkMode} navigateTo={navigateTo} setDarkMode={setDarkMode} />
     );
 }
 
 
-// The Contact Page component
 const ContactPage = ({ darkMode, navigateTo, setDarkMode }) => {
-    // State for controlling the visibility and animation of the main card.
     const [isVisible, setIsVisible] = useState(false);
-    // State for form data.
     const [formData, setFormData] = useState({
         name: '',
         email: '',
         subject: '',
         message: '',
     });
-    // State for form validation errors.
     const [errors, setErrors] = useState({});
-    // State to track form submission process.
     const [isSubmitting, setIsSubmitting] = useState(false);
-    // State for the result of the submission ('success' or 'error').
     const [submissionStatus, setSubmissionStatus] = useState(null);
-    // State to control the visibility of the toast notification.
     const [showToast, setShowToast] = useState(false);
 
-    // Effect for triggering the main card animation on component mount.
     useEffect(() => {
         const timer = setTimeout(() => setIsVisible(true), 100);
         return () => clearTimeout(timer);
     }, []);
 
-    // Effect for automatically hiding the toast notification after 5 seconds.
     useEffect(() => {
         if (showToast) {
             const toastTimer = setTimeout(() => {
@@ -68,21 +53,20 @@ const ContactPage = ({ darkMode, navigateTo, setDarkMode }) => {
         }
     }, [showToast]);
 
-    // Handles changes in form input fields.
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prevData) => ({
             ...prevData,
             [name]: value,
         }));
-        // Clear the error for the field being edited.
+        
         setErrors((prevErrors) => ({
             ...prevErrors,
             [name]: null,
         }));
     };
 
-    // Validates the form fields before submission.
+    
     const validateForm = () => {
         let newErrors = {};
         if (!formData.name.trim()) newErrors.name = 'Name is required';
@@ -94,11 +78,11 @@ const ContactPage = ({ darkMode, navigateTo, setDarkMode }) => {
         if (!formData.message.trim()) newErrors.message = 'Message is required';
         
         setErrors(newErrors);
-        // Returns true if there are no errors.
+        
         return Object.keys(newErrors).length === 0;
     };
 
-    // Handles the form submission with your EmailJS keys.
+  
     const handleSubmit = (e) => {
         e.preventDefault();
         setSubmissionStatus(null);
@@ -110,7 +94,6 @@ const ContactPage = ({ darkMode, navigateTo, setDarkMode }) => {
 
         setIsSubmitting(true);
 
-        // Your specific EmailJS details are now included here.
         const serviceID = 'service_sc9xokh';
         const templateID = 'template_22c3a2a';
         const publicKey = 'bcz_108RDETTP_XP4';
