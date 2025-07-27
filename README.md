@@ -7,6 +7,7 @@ A beautiful, responsive, and modern **Expense Tracker App** built with **React**
 ## ✨ Features
 
 - 🔹 Add, view, and delete transactions
+- 🎯 Set and track financial savings goals
 - 📊 View total income, expenses, and current balance
 - 📅 Automatically tracks the date of transactions
 - 🖼️ Smooth UI with animated buttons and transitions
@@ -60,11 +61,11 @@ If you'd like to contribute or customize Smart Tracker for your own use:
 2. Clone your forked version:
 
 ```bash
-git clone https://github.com/your-username/expense-tracker.git
+git clone https://github.com/your-username/SmartLog.git
 ```
 ## Install dependencies and start the development server
 ```bash
-cd expense-tracker
+cd SmartLog
 npm install
 npm run dev
 ```
