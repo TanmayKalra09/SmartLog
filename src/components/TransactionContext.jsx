@@ -1,7 +1,16 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 
-const TransactionContext = createContext();
+const TransactionContext = createContext({
+  transactions: [],
+  addTransaction: () => {},
+  deleteTransaction: () => {},
+  undoDelete: () => {},
+  income: 0,
+  expense: 0,
+  lastDeleted: null,
+});
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useTransactions = () => useContext(TransactionContext);
 
 const getTodaysDate = () => {
@@ -18,10 +27,11 @@ export const TransactionProvider = ({ children }) => {
     return saved ? JSON.parse(saved) : [];
   });
 
+  const [lastDeleted, setLastDeleted] = useState(null);
   const [goals, setGoals] = useState(() => {
     const saved = localStorage.getItem('goals');
     return saved ? JSON.parse(saved) : [];
-  })
+  });
 
   useEffect(() => {
     localStorage.setItem('transactions', JSON.stringify(transactions));
@@ -32,73 +42,90 @@ export const TransactionProvider = ({ children }) => {
   }, [goals]);
 
   const addTransaction = (transaction) => {
-    setTransactions([transaction, ...transactions]);
+    setTransactions((prev) => [transaction, ...prev]);
+  };
+
+  // ✅ Merged deleteTransaction with Undo + Goal Refund
+  const deleteTransaction = (transactionId) => {
+    const transactionToDelete = transactions.find((t) => t.id === transactionId);
+    if (!transactionToDelete) return;
+
+    // Save last deleted for Undo feature
+    setLastDeleted(transactionToDelete);
+
+    // If it was a goal contribution, refund it
+    if (transactionToDelete.goalId) {
+      const updatedGoals = goals.map((goal) =>
+        goal.id === transactionToDelete.goalId
+          ? { ...goal, currentAmount: goal.currentAmount - transactionToDelete.amount }
+          : goal
+      );
+      setGoals(updatedGoals);
+    }
+
+    // Remove from transactions
+    const updatedTransactions = transactions.filter((t) => t.id !== transactionId);
+    setTransactions(updatedTransactions);
+  };
+
+  const undoDelete = () => {
+    if (lastDeleted) {
+      setTransactions((prev) => [lastDeleted, ...prev]);
+      setLastDeleted(null);
+    }
   };
 
   const addGoal = (goal) => {
     setGoals([goal, ...goals]);
-  }
+  };
 
-  const deleteTransaction = (transactionId) => {
-    // 1. Find the transaction to be deleted
-    const transactionToDelete = transactions.find(t => t.id === transactionId);
+  const contributeToGoal = (goalId, amount) => {
+    let goalName = '';
+    const updatedGoals = goals.map((goal) => {
+      if (goal.id === goalId) {
+        goalName = goal.name;
+        return { ...goal, currentAmount: goal.currentAmount + amount };
+      }
+      return goal;
+    });
+    setGoals(updatedGoals);
 
-    if (!transactionToDelete) return; // Exit if transaction not found
-
-    // 2. Check if it was a contribution to a goal
-    if (transactionToDelete.goalId) {
-      // 3. If yes, "refund" the amount from the goal
-      const updatedGoals = goals.map(goal => {
-        if (goal.id === transactionToDelete.goalId) {
-          return {
-            ...goal,
-            currentAmount: goal.currentAmount - transactionToDelete.amount
-          };
-        }
-        return goal;
-      });
-      setGoals(updatedGoals);
-    }
-
-    // 4. Finally, delete the transaction itself
-    setTransactions(prev => prev.filter(t => t.id !== transactionId));
+    const contributionTransaction = {
+      id: Date.now(),
+      note: `Contribution to "${goalName}"`,
+      amount: amount,
+      type: 'Expense',
+      category: 'Savings',
+      date: getTodaysDate(),
+      goalId: goalId,
+    };
+    addTransaction(contributionTransaction);
   };
 
   const income = transactions
-    .filter(t => t.type === 'Income')
-    .reduce((sum, t) => sum + Number(t.amount), 0);
+    .filter((t) => t.type === 'Income')
+    .reduce((sum, t) => sum + (isNaN(Number(t.amount)) ? 0 : Number(t.amount)), 0);
 
   const expense = transactions
-    .filter(t => t.type === 'Expense')
-    .reduce((sum, t) => sum + Number(t.amount), 0);
-
-  const contributeToGoal = (goalId, amount) => {
-      let goalName = '';
-
-      const updatedGoals = goals.map(goal => {
-        if (goal.id === goalId) {
-          goalName = goal.name; 
-          return { ...goal, currentAmount: goal.currentAmount + amount };
-        }
-        return goal;
-      });
-      setGoals(updatedGoals);
-
-      const contributionTransaction = {
-        id: Date.now(),
-        note: `Contribution to "${goalName}"`,
-        amount: amount,
-        type: 'Expense',
-        category: 'Savings',
-        date: getTodaysDate(),
-        goalId: goalId
-      };
-      addTransaction(contributionTransaction);
-    };
+    .filter((t) => t.type === 'Expense')
+    .reduce((sum, t) => sum + (isNaN(Number(t.amount)) ? 0 : Number(t.amount)), 0);
 
   return (
     <TransactionContext.Provider
-      value={{ transactions, setTransactions, addTransaction, income, expense, deleteTransaction, goals, setGoals, addGoal, contributeToGoal }}
+      value={{
+        transactions,
+        setTransactions,
+        addTransaction,
+        deleteTransaction,
+        undoDelete,
+        income,
+        expense,
+        lastDeleted,
+        goals,
+        setGoals,
+        addGoal,
+        contributeToGoal,
+      }}
     >
       {children}
     </TransactionContext.Provider>
