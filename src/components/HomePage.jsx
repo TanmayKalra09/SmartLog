@@ -3,7 +3,6 @@ import { IndianRupee, TrendingUp, PieChart, BarChart3, Sparkles, ArrowRight, Plu
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Footer from './Footer';
-
 export default function HomePage() {
   const [isVisible, setIsVisible] = useState(false);
   const [hoveredFeature, setHoveredFeature] = useState(null);
