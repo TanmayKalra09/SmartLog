@@ -155,10 +155,43 @@ export default function Dashboard() {
 
 
   const maxAmount = Math.max(1, ...transactions.map(t => t.amount));
+
+  const convertToCSV = (transactions) => {
+    const headers = ['Date', 'Type', 'Category', 'Amount', 'Note'];
+    const rows = transactions.map(t => {
+      const note = t.note.includes(',') ? `"${t.note}"` : t.note;
+      return [t.date, t.type, t.category, t.amount, note]
+    })
+
+    const headerRow = headers.join(',')
+    const rowStrings = rows.map(r => 
+      r.join(',')
+    )
+
+    return [headerRow, ...rowStrings].join('\n')
+  }
+
+  const downloadCSV = (csvString) => {
+    const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'transactions.csv';
+    link.href = url;
+    link.download = 'transactions.csv';
+    link.click()
+    URL.revokeObjectURL(url);
+  }
+
+  const handleExportCSV = () => {
+    const s = convertToCSV(transactions)
+    downloadCSV(s)
+  }
+
   return (
     <div className={`min-h-screen flex flex-col transition-colors duration-300 ${darkMode
-        ? "bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-gray-100"
-        : "bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 text-gray-900"
+      ? "bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-gray-100"
+      : "bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 text-gray-900"
       }`}>
       <main className="flex-1 w-full p-6 mb-40">
         <div className="max-w-6xl mx-auto">
@@ -179,8 +212,8 @@ export default function Dashboard() {
             <button
               onClick={toggleDarkMode}
               className={`p-2 rounded-full transition-all duration-300 ${darkMode
-                  ? "bg-gray-700 text-yellow-300 hover:bg-gray-600"
-                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                ? "bg-gray-700 text-yellow-300 hover:bg-gray-600"
+                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
                 }`}
               aria-label="Toggle dark mode"
             >
@@ -282,8 +315,8 @@ export default function Dashboard() {
 
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className={`w-full pl-12 pr-4 py-4 rounded-2xl border focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300 backdrop-blur-sm ${darkMode
-                    ? "bg-gray-800 border-gray-700 text-white placeholder-gray-400 focus:ring-blue-900"
-                    : "bg-white/80 border-gray-200 text-gray-900 placeholder-gray-500"
+                  ? "bg-gray-800 border-gray-700 text-white placeholder-gray-400 focus:ring-blue-900"
+                  : "bg-white/80 border-gray-200 text-gray-900 placeholder-gray-500"
                   }`}
               />
             </div>
@@ -295,8 +328,8 @@ export default function Dashboard() {
 
                 onChange={(e) => setSelectedCategory(e.target.value)}
                 className={`w-full pl-12 pr-8 py-4 rounded-2xl border focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300 backdrop-blur-sm appearance-none cursor-pointer relative z-0 ${darkMode
-                    ? "bg-gray-800 border-gray-700 text-white focus:ring-blue-900"
-                    : "bg-white/80 border-gray-200 text-gray-900"
+                  ? "bg-gray-800 border-gray-700 text-white focus:ring-blue-900"
+                  : "bg-white/80 border-gray-200 text-gray-900"
                   }`}
               >
                 {categories.map((category) => (
@@ -340,7 +373,19 @@ export default function Dashboard() {
                   {filteredTransactions.length}
                 </span>
               </h3>
-
+              <div className="flex gap-3">
+              
+              {
+                transactions.length > 0 && (
+                  <button 
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-indigo-100 text-indigo-700 hover:bg-indigo-200 hover:text-indigo-900 transition-all duration-200 shadow-sm hover:shadow-md mt-2 md:mt-0 whitespace-nowrap mb-2 cursor-pointer"
+                  onClick={handleExportCSV}                  
+                  >
+                      <Download className="h-5 w-5" />
+                      Download Transactions in CSV
+                  </button>
+                )
+              }
               {transactions.length > 0 && (
                 <PDFDownloadLink document={<TransactionPDF transactions={transactions} />} fileName="Transaction-History.pdf">
                   {() => (
@@ -351,6 +396,7 @@ export default function Dashboard() {
                   )}
                 </PDFDownloadLink>
               )}
+              </div>
             </div>
 
             <div className="space-y-4">
@@ -358,8 +404,8 @@ export default function Dashboard() {
                 <div
                   key={transaction.id}
                   className={`group p-6 rounded-2xl shadow-lg hover:shadow-xl transform hover:scale-[1.02] hover:-translate-y-1 transition-all duration-300 border ${darkMode
-                      ? "bg-gray-800 border-gray-700 hover:border-gray-600"
-                      : "bg-white/80 border-gray-100 hover:border-gray-200"
+                    ? "bg-gray-800 border-gray-700 hover:border-gray-600"
+                    : "bg-white/80 border-gray-100 hover:border-gray-200"
                     }`}
                   style={{ animationDelay: `${1.2 + index * 0.1}s` }}
                 >
@@ -367,8 +413,8 @@ export default function Dashboard() {
                     <div className="flex items-center gap-4">
                       <div
                         className={`w-12 h-12 rounded-2xl flex items-center justify-center text-xl ${transaction.type === "Income"
-                            ? "bg-green-100 text-green-600 group-hover:bg-green-200"
-                            : "bg-red-100 text-red-600 group-hover:bg-red-200"
+                          ? "bg-green-100 text-green-600 group-hover:bg-green-200"
+                          : "bg-red-100 text-red-600 group-hover:bg-red-200"
                           } group-hover:scale-110 transition-all duration-300 ${darkMode
                             ? transaction.type === "Income"
                               ? "dark:bg-green-900/30 dark:text-green-400 group-hover:dark:bg-green-900/50"
@@ -399,8 +445,8 @@ export default function Dashboard() {
 
                       <div
                         className={`text-2xl font-black group-hover:scale-110 transition-transform duration-300 ${transaction.type === "Expense"
-                            ? "text-red-600 dark:text-red-400"
-                            : "text-green-600 dark:text-green-400"
+                          ? "text-red-600 dark:text-red-400"
+                          : "text-green-600 dark:text-green-400"
                           }`}
                       >
                         {transaction.type === "Expense" ? "-" : "+"}
@@ -422,8 +468,8 @@ export default function Dashboard() {
                     <div
 
                       className={`h-full rounded-full transition-all duration-1000 ${transaction.type === "Income"
-                          ? "bg-green-400 dark:bg-green-500"
-                          : "bg-red-400 dark:bg-red-500"
+                        ? "bg-green-400 dark:bg-green-500"
+                        : "bg-red-400 dark:bg-red-500"
                         }`}
                       style={{
                         width: `${Math.min((transaction.amount / maxAmount) * 100, 100)}%`,

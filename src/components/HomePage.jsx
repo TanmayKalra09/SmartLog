@@ -1,33 +1,20 @@
 import { useState, useEffect } from 'react';
-import { IndianRupee, TrendingUp, PieChart, BarChart3, Sparkles, ArrowRight } from 'lucide-react';
+import { IndianRupee, TrendingUp, PieChart, BarChart3, Sparkles, ArrowRight, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import Footer from './Footer';
-
 
 export default function HomePage() {
   const [isVisible, setIsVisible] = useState(false);
   const [hoveredFeature, setHoveredFeature] = useState(null);
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [clickEffect, setClickEffect] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
     setIsVisible(true);
   }, []);
 
-  useEffect(() => {
-    const handleMouseMove = (e) => {
-      setMousePosition({ x: e.clientX, y: e.clientY });
-    };
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, []);
-
   const handleGetStarted = () => {
-    setClickEffect(true);
-    setTimeout(() => setClickEffect(false), 600);
     navigate('/dashboard');
-    console.log('Navigating to dashboard...');
   };
 
   const features = [
@@ -37,7 +24,6 @@ export default function HomePage() {
     { icon: PieChart, title: 'Visual Reports', desc: 'See your spending', color: 'from-purple-400 to-pink-500' },
     { icon: BarChart3, title: 'Budget Goals', desc: 'Stay on track', color: 'from-pink-400 to-red-500' },
     
-
   ];
   const handleCardClick = (title) => {
     switch (title) {
@@ -52,103 +38,33 @@ export default function HomePage() {
 
 
   return (
-    <div className="relative min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 overflow-hidden">
-      <div className="absolute inset-0">
-        {[...Array(30)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute rounded-full opacity-10"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              width: `${2 + Math.random() * 4}px`,
-              height: `${2 + Math.random() * 4}px`,
-              background: `hsl(${200 + Math.random() * 100}, 70%, 60%)`,
-              animation: `twinkle ${2 + Math.random() * 3}s ease-in-out infinite`,
-              animationDelay: `${Math.random() * 3}s`
-            }}
-          />
-        ))}
-      </div>
-
-
-      <div
-        className="fixed w-96 h-96 pointer-events-none transition-all duration-500 ease-out opacity-30"
-        style={{
-          left: mousePosition.x - 192,
-          top: mousePosition.y - 192,
-          background: 'radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, rgba(139, 92, 246, 0.1) 50%, transparent 70%)',
-          borderRadius: '50%',
-          filter: 'blur(40px)'
-        }}
-      />
-
-      <div className="relative z-10 flex flex-col items-center justify-center min-h-screen text-center">
-
-        <div className={`transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
-
-
-          <div className="m-8 relative" style={{ animationDelay: '0.2s' }}>
-            <div className="w-24 h-24 mx-auto bg-gradient-to-br from-blue-400 via-purple-500 to-pink-500 rounded-3xl flex items-center justify-center mb-6 transform hover:scale-110 hover:rotate-6 transition-all duration-300 shadow-2xl relative overflow-hidden">
-              <Sparkles className="w-12 h-12 text-white animate-pulse relative z-10" />
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 translate-x-full animate-[shimmer_2s_ease-in-out_infinite]"></div>
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-purple-100 relative overflow-hidden">
+      <div className="relative z-10 container mx-auto px-6 py-8">
+        {/* Main Content Section - SmartLog Branding Left, Device Mockup Right */}
+        <div className="flex items-center justify-between mb-20">
+          {/* Left Side - SmartLog Branding */}
+          <div className="flex-1 max-w-lg ml-16">
+            <div className="mb-8">
+              {/* SmartLog Logo */}
+              <div className="w-20 h-20 bg-gradient-to-br from-purple-400 to-pink-500 rounded-2xl flex items-center justify-center shadow-lg mb-6">
+                <Sparkles className="w-10 h-10 text-white" />
+              </div>
+              <div>
+                <h1 className="text-5xl font-black text-gray-800 mb-4">SmartLog</h1>
+                <p className="text-xl text-gray-600 leading-relaxed max-w-lg">
+                  Transform your financial future with AI-powered insights, beautiful visualizations, and smart automation.
+                </p>
+              </div>
             </div>
-
-            <div className="absolute top-2 left-8 w-2 h-2 bg-yellow-400 rounded-full animate-bounce" style={{ animationDelay: '0.5s' }}></div>
-            <div className="absolute top-8 right-4 w-3 h-3 bg-pink-400 rounded-full animate-bounce" style={{ animationDelay: '1s' }}></div>
-            <div className="absolute bottom-4 left-4 w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '1.5s' }}></div>
-          </div>
-
-
-          <h1 className="text-5xl md:text-7xl font-black mb-6 leading-tight">
-            <span className="bg-gradient-to-r from-white via-blue-200 to-purple-200 bg-clip-text text-transparent">
-              Smart
-            </span>
-            <span className="relative inline-block">
-              <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-                Log
-              </span>
-              <div className="absolute -bottom-3 left-0 right-0 h-2 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full transform origin-left animate-[expandWidth_2s_ease-out_1s_forwards] scale-x-0"></div>
-            </span>
-          </h1>
-
-
-          <p className="text-xl md:text-2xl text-gray-300 mb-12 max-w-3xl leading-relaxed">
-            Transform your financial future with
-            <span className="text-blue-300 font-semibold animate-pulse"> AI-powered insights</span>,
-            <br className="hidden md:block" />
-            <span className="text-purple-300 font-semibold"> beautiful visualizations</span>, and
-            <span className="text-pink-300 font-semibold animate-pulse"> smart automation</span>.
-          </p>
-
-
-          <div className="mb-6">
-            <div className="text-sm uppercase tracking-widest text-gray-400 font-semibold mb-4 animate-pulse">
-              Ready to take control?
-            </div>
-          </div>
-
-          <div className="relative group mb-16">
+            
             <button
               onClick={handleGetStarted}
-              className={`relative bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white font-bold px-16 py-5 rounded-full text-xl shadow-2xl transition-all duration-300 hover:shadow-purple-500/30 hover:scale-105 hover:-translate-y-2 focus:outline-none focus:ring-4 focus:ring-purple-500/50 ${clickEffect ? 'animate-pulse scale-95' : ''}`}
+              className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-12 py-5 rounded-full font-bold text-xl hover:shadow-lg hover:scale-105 transition-all duration-300 flex items-center space-x-3"
             >
-              <span className="relative z-10 flex items-center gap-3">
-                Start Your Journey
-                <ArrowRight className="w-6 h-6 transition-transform group-hover:translate-x-2" />
-              </span>
-
-
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full blur-lg opacity-0 group-hover:opacity-60 transition-opacity duration-300 animate-pulse"></div>
+              <span>Get Started</span>
+              <ArrowRight className="w-6 h-6" />
             </button>
-
-
-            <div className="absolute -top-4 -right-4 w-4 h-4 bg-green-400 rounded-full animate-ping"></div>
-            <div className="absolute -bottom-4 -left-4 w-3 h-3 bg-yellow-400 rounded-full animate-ping" style={{ animationDelay: '0.5s' }}></div>
-            <div className="absolute top-0 left-8 w-2 h-2 bg-pink-400 rounded-full animate-bounce" style={{ animationDelay: '1s' }}></div>
           </div>
-
-
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16 max-w-5xl">
             {features.map((feature, index) => {
 
@@ -179,42 +95,73 @@ export default function HomePage() {
                 </div>
               );
             })}
+          {/* Right Side - Device Mockup Image */}
+          <div className="flex-1 flex justify-end">
+            <img 
+              src="/laptop_mobile_mockup.png" 
+              alt="SmartLog Mobile and Laptop Mockup" 
+              className="w-auto h-[500px] object-contain"
+            />
           </div>
         </div>
-        <div className='w-full'>
 
-          <Footer />
+        {/* Bottom Section - Feature Boxes */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-16 max-w-6xl mx-auto">
+          {features.map((feature, index) => {
+            const Icon = feature.icon;
+            const isHovered = hoveredFeature === index;
+            return (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 80, scale: 0.9 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ 
+                  duration: 0.8, 
+                  delay: index * 0.15,
+                  ease: [0.25, 0.46, 0.45, 0.94]
+                }}
+                whileHover={{ 
+                  scale: 1.03,
+                  y: -8,
+                  transition: { 
+                    duration: 0.4,
+                    ease: [0.25, 0.46, 0.45, 0.94]
+                  }
+                }}
+                className={`group p-8 rounded-3xl bg-white shadow-xl hover:shadow-2xl transition-all duration-500 cursor-pointer ${
+                  isHovered ? 'border-2 border-purple-200' : 'border border-gray-100'
+                }`}
+                onMouseEnter={() => setHoveredFeature(index)}
+                onMouseLeave={() => setHoveredFeature(null)}
+              >
+                <motion.div 
+                  className={`w-16 h-16 mx-auto mb-6 rounded-2xl ${feature.bgColor} flex items-center justify-center`}
+                  whileHover={{ 
+                    scale: 1.08, 
+                    rotate: 3,
+                    transition: { 
+                      duration: 0.4,
+                      ease: [0.25, 0.46, 0.45, 0.94]
+                    }
+                  }}
+                  transition={{ 
+                    duration: 0.4,
+                    ease: [0.25, 0.46, 0.45, 0.94]
+                  }}
+                >
+                  <Icon className="w-8 h-8 text-white" />
+                </motion.div>
+                <h3 className="font-bold text-gray-800 mb-3 text-center text-xl">{feature.title}</h3>
+                <p className="text-base text-gray-500 text-center group-hover:text-gray-600 transition-colors duration-300">
+                  {feature.desc}
+                </p>
+              </motion.div>
+            );
+          })}
         </div>
       </div>
 
-
-      <style jsx>{`
-        @keyframes twinkle {
-          0%, 100% { opacity: 0.1; transform: scale(1); }
-          50% { opacity: 0.3; transform: scale(1.2); }
-        }
-        @keyframes shimmer {
-          to { transform: translateX(200%) skewX(-12deg); }
-        }
-        @keyframes expandWidth {
-          to { transform: scaleX(1); }
-        }
-        @keyframes slideUp {
-          from { opacity: 0; transform: translateY(30px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes fadeInUp {
-          from { opacity: 0; transform: translateY(20px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes scrollDot {
-          0% { transform: translateY(0); opacity: 1; }
-          50% { transform: translateY(12px); opacity: 0.5; }
-          100% { transform: translateY(0); opacity: 1; }
-        }
-      `}</style>
-
+      <Footer />
     </div>
-
   );
 }
