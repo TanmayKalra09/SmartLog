@@ -3,9 +3,11 @@ import { useTransactions } from "./TransactionContext";
 import AddGoalModal from './AddGoalModal';
 import Footer from './Footer';
 import GoalCard from './GoalCard';
-import { Plus } from 'lucide-react';
+import { Plus, ArrowLeft } from 'lucide-react';
 import ConfirmationModal from './ConfirmationModal';
 import ContributeToGoalModal from './ContributeToGoalModal';
+import { useNavigate } from 'react-router-dom';
+
 
 export default function GoalsPage() {
   const { goals, setGoals } = useTransactions();
@@ -15,6 +17,8 @@ export default function GoalsPage() {
   const [goalToDelete, setGoalToDelete] = useState(null);
   const [showContributeModal, setShowContributeModal] = useState(false);
   const [selectedGoalId, setSelectedGoalId] = useState(null);
+  const navigate = useNavigate();
+
 
   // 2. Add state for animation visibility
   const [isVisible, setIsVisible] = useState(false);
@@ -50,9 +54,23 @@ export default function GoalsPage() {
         <div className="max-w-6xl mx-auto">
 
           <div className={`transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'}`}>
-            <h1 className="text-4xl font-black bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-2">
-              Financial Goals
-            </h1>
+            <div className="flex items-center gap-2 mb-2">
+              <button
+                onClick={() => navigate('/dashboard')}
+                className="p-1.5 rounded-full transition 
+                          hover:bg-purple-100 
+                          dark:hover:bg-gray-700/40"
+                aria-label="Back to Dashboard"
+              >
+                <ArrowLeft className="w-6 h-6 text-purple-600 dark:text-purple-300" />
+              </button>
+
+              <h1 className="text-4xl font-black bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                Financial Goals
+              </h1>
+            </div>
+
+
             <p className={`transition-colors duration-300 ${darkMode ? "text-gray-400" : "text-gray-600"} mb-8`}>
               Set, track, and achieve your savings goals.
             </p>
