@@ -38,6 +38,9 @@ export default function HomePage() {
   ];
 
   return (
+      <div className="min-h-screen flex flex-col">
+      <main className="flex-1">
+
     <div className="relative min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 overflow-hidden">
       <div className="absolute inset-0">
         {[...Array(30)].map((_, i) => (
@@ -167,8 +170,6 @@ export default function HomePage() {
           </div>
         </div>
         <div className='w-full'>
-
-          <Footer />
         </div>
       </div>
 
@@ -201,5 +202,8 @@ export default function HomePage() {
 
     </div>
 
+      </main>
+      <Footer />
+    </div>
   );
 }
