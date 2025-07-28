@@ -24,6 +24,9 @@ export default function AddTransactionModal({ showModal = true, setShowModal = (
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { currency, locale, setCurrency, setLocale } = useCurrency();
   const [errors, setErrors] = useState({});
+  const suggestedCategories = ['Food', 'Transport', 'Groceries', 'Entertainment', 'Bills', 'Shopping', 'Rent', 'Utilities', 'Salary', 'Others'];
+  const [categorySuggestions, setCategorySuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
 
   const getCurrencySymbol = (currency, locale) => {
     return (0).toLocaleString(locale, {
@@ -102,6 +105,16 @@ const handleSubmit = async (e) => {
      if (field === "date") {
       newValue = formatDate(value);
     }
+
+    if (field === "category") {
+      const input = value.toLowerCase();
+      const filtered = suggestedCategories.filter(cat =>
+        cat.toLowerCase().includes(input) && input
+      );
+      setCategorySuggestions(filtered);
+      setShowSuggestions(filtered.length > 0);
+    }
+
     setForm({ ...form, [field]: newValue });
     if (errors[field]) {
       setErrors({ ...errors, [field]: " " });
@@ -169,12 +182,14 @@ const handleSubmit = async (e) => {
             </div>
 
 
-            <div className="space-y-2">
+            <div className="space-y-2 relative">
               <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">Category</label>
               <input
                 type="text"
                 value={form.category}
-                 onChange={e => handleInputChange("category", e.target.value)}
+                onChange={e => handleInputChange("category", e.target.value)}
+                onFocus={() => setShowSuggestions(categorySuggestions.length > 0)}
+                onBlur={() => setTimeout(() => setShowSuggestions(false), 100)}
                 className={`w-full px-4 py-3 border-2 rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
                   errors.category 
                     ? 'border-red-300 bg-red-50 dark:bg-red-900/20 dark:border-red-700' 
@@ -183,7 +198,28 @@ const handleSubmit = async (e) => {
                 placeholder="e.g., Food, Transport, Entertainment"
               />
               {errors.category && <p className="text-red-500 dark:text-red-400 text-sm animate-pulse">{errors.category}</p>}
+
+              {/* 💡 Suggestion Dropdown */}
+              {showSuggestions && (
+                <ul className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl max-h-48 overflow-auto shadow-lg">
+                  {categorySuggestions.map((suggestion, index) => (
+                    <li
+                      key={index}
+                      onMouseDown={() => {
+                        setForm(prev => ({ ...prev, category: suggestion }));
+                        setShowSuggestions(false);
+                        setCategorySuggestions([]);
+                      }}
+                      className="px-4 py-2 cursor-pointer hover:bg-blue-100 dark:hover:bg-blue-600 dark:text-white transition-colors"
+                    >
+                      {suggestion}
+                    </li>
+
+                  ))}
+                </ul>
+              )}
             </div>
+
 
     
             <div className="space-y-2">
