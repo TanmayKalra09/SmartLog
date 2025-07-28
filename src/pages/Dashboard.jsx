@@ -1,13 +1,13 @@
 import { Plus, TrendingUp, TrendingDown, Wallet, IndianRupee, Calendar, Tag, Filter, Search, Eye, EyeOff, ChevronDown, ChevronLeft, ChevronRight, Trash2, Download, Moon, Sun, Target } from "lucide-react";
-import { useTransactions } from "./TransactionContext";
-import { useCurrency } from "./CurrencyContext";
+import { useTransactions } from "../context/TransactionContext";
+import { useCurrency } from "../context/CurrencyContext";
 import { useState, useEffect } from "react";
-import AddTransactionModal from "./AddTransactionModal";
-import ConfirmationModal from "./ConfirmationModal";
-import Footer from "./Footer";
+import AddTransactionModal from "../components/AddTransactionModal";
+import ConfirmationModal from "../components/ConfirmationModal";
+import Footer from "../components/Footer";
 // Download imports
 import { PDFDownloadLink } from "@react-pdf/renderer";
-import TransactionPDF from "./TransactionPDF";
+import TransactionPDF from "../components/TransactionPDF";
 import { Link } from "react-router-dom";
 
 export default function Dashboard() {

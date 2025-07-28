@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { IndianRupee, TrendingUp, PieChart, BarChart3, Sparkles, ArrowRight, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import Footer from './Footer';
+import Footer from '../components/Footer';
 
 export default function HomePage() {
   const [isVisible, setIsVisible] = useState(false);

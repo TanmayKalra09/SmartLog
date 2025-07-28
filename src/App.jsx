@@ -1,12 +1,12 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import HomePage from './components/HomePage';
-import Dashboard from './components/Dashboard';
-import { TransactionProvider } from './components/TransactionContext';
 import { Toaster } from 'react-hot-toast';
-import { CurrencyProvider } from "./components/CurrencyContext";
-import AboutPage from './components/AboutPage';
-import ContactPage from './components/ContactPage';
-import GoalsPage from './components/GoalsPage';
+import { TransactionProvider } from './context/TransactionContext';
+import { CurrencyProvider } from "./context/CurrencyContext";
+import HomePage from './pages/HomePage';
+import Dashboard from './pages/Dashboard';
+import AboutPage from './pages/AboutPage';
+import ContactPage from './pages/ContactPage';
+import GoalsPage from './pages/GoalsPage';
 
 export default function App() {
 
