@@ -95,6 +95,7 @@ export default function HomePage() {
                 </div>
               );
             })}
+          </div>
           {/* Right Side - Device Mockup Image */}
           <div className="flex-1 flex justify-end">
             <img 
