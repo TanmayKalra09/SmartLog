@@ -49,3 +49,28 @@
     backdrop-filter: blur(4px);
   }
 }
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.35);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+.modal-content {
+  background: #fff;
+  padding: 2em;
+  border-radius: 12px;
+  position: relative;
+  min-width: 340px;
+  max-width: 400px;
+}
+.close-modal {
+  position: absolute;
+  top: 14px; right: 16px;
+  background: none;
+  border: none;
+  font-size: 1.5em;
+  cursor: pointer;
+}

@@ -12,7 +12,11 @@
   "dependencies": {
     "@react-pdf/renderer": "^4.3.0",
     "@tailwindcss/vite": "^4.1.11",
+    "bcryptjs": "^3.0.2",
+    "blueimp-md5": "^2.19.0",
+    "express": "^5.1.0",
     "framer": "^2.4.1",
+    "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.525.0",
     "motion": "^12.23.9",
     "react": "^18.2.0",
@@ -25,8 +29,8 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.29.0",
-    "@types/react": "^19.1.8",
-    "@types/react-dom": "^19.1.6",
+    "@types/react": "^19.1.9",
+    "@types/react-dom": "^19.1.7",
     "@vitejs/plugin-react": "^4.5.2",
     "eslint": "^9.29.0",
     "eslint-plugin-react-hooks": "^5.2.0",
