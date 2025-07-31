@@ -503,7 +503,7 @@ export default function Dashboard() {
       <Footer />
 
 
-      <AddTransactionModal showModal={showModal} setShowModal={setShowModal} darkMode={darkMode} />
+      <AddTransactionModal showModal={showModal} setShowModal={setShowModal} />
       <ConfirmationModal
         show={showDeleteModal}
         onClose={() => setShowDeleteModal(false)}

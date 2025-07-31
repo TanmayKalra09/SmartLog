@@ -25,8 +25,8 @@ const ConfirmationModal = ({show, onClose, onConfirm, title, message}) => {
     }
 
     return (
-        <div className={`fixed inset-0 w-full h-screen bg-black transition-opacity duration-300 z-50 overflow-y-auto flex items-center justify-center 
-            ${isVisible ? 'bg-opacity-50' : 'bg-opacity-0'
+        <div className={`fixed inset-0 w-full h-screen backdrop-blur-sm bg-black/10  transition-opacity duration-300 z-50 overflow-y-auto flex items-center justify-center 
+            ${isVisible ? 'bg-opacity-100' : 'bg-opacity-0'
             }`}
             onClick={handleClose}>
             <div 
