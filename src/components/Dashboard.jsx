@@ -1,4 +1,4 @@
-import { Plus, TrendingUp, TrendingDown, Wallet, IndianRupee, Calendar, Tag, Filter, Search, Eye, EyeOff, ChevronDown, ChevronLeft, ChevronRight, Trash2, Download, Moon, Sun, Target } from "lucide-react";
+import { Plus, TrendingUp, TrendingDown, Wallet, IndianRupee, Calendar, Tag, Filter, Search, Eye, EyeOff, ChevronDown, ChevronLeft, ChevronRight, Trash2, Download, Moon, Sun, Target, LogOut } from "lucide-react";
 import { useTransactions } from "./TransactionContext";
 import { useCurrency } from "./CurrencyContext";
 import { useState, useEffect } from "react";
@@ -8,7 +8,7 @@ import Footer from "./Footer";
 // Download imports
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import TransactionPDF from "./TransactionPDF";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Dashboard() {
   const { transactions, income, expense, setTransactions, deleteTransaction } = useTransactions();
@@ -18,7 +18,7 @@ export default function Dashboard() {
   const [isVisible, setIsVisible] = useState(false);
   const [hoveredCard, setHoveredCard] = useState(null);
   const [showBalance, setShowBalance] = useState(true);
-
+  const navigate = useNavigate();
 
   const [animatedValues, setAnimatedValues] = useState({ income: 0, expense: 0, balance: 0 });
   const { currency, locale, setCurrency, setLocale } = useCurrency();
@@ -55,6 +55,14 @@ export default function Dashboard() {
   // Toggle dark mode
   const toggleDarkMode = () => {
     setDarkMode(!darkMode);
+  };
+
+  // Logout function
+  const handleLogout = () => {
+     localStorage.removeItem('token');
+      localStorage.removeItem('user');
+    // Redirect to home page
+    navigate('/');
   };
 
   // Apply dark mode class to body
@@ -208,17 +216,33 @@ export default function Dashboard() {
               </p>
             </div>
 
-            {/* Dark Mode Toggle Button */}
-            <button
-              onClick={toggleDarkMode}
-              className={`p-2 rounded-full transition-all duration-300 ${darkMode
-                ? "bg-gray-700 text-yellow-300 hover:bg-gray-600"
-                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                }`}
-              aria-label="Toggle dark mode"
-            >
-              {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-            </button>
+            {/* Theme Toggle and Logout Buttons */}
+            <div className="flex items-center gap-3">
+              {/* Dark Mode Toggle Button */}
+              <button
+                onClick={toggleDarkMode}
+                className={`p-2 rounded-full transition-all duration-300 ${darkMode
+                  ? "bg-gray-700 text-yellow-300 hover:bg-gray-600"
+                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                  }`}
+                aria-label="Toggle dark mode"
+              >
+                {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+              </button>
+
+              {/* Logout Button */}
+              <button
+                onClick={handleLogout}
+                className={`p-2 rounded-full transition-all duration-300 ${darkMode
+                  ? "bg-red-700 text-red-300 hover:bg-red-600"
+                  : "bg-red-100 text-red-600 hover:bg-red-200"
+                  }`}
+                aria-label="Logout"
+                title="Logout"
+              >
+                <LogOut className="w-5 h-5" />
+              </button>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
