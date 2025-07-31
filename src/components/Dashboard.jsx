@@ -237,7 +237,8 @@ export default function Dashboard() {
               </div>
               <div className="text-white/80 text-sm font-medium mb-2">Total Income</div>
               <div className="text-3xl font-black text-white mb-1">{formatCurrency(animatedValues.income)}</div>
-              <div className="text-white/60 text-xs">+12% from last month</div>
+              {/* <div className="text-white/60 text-xs">+12% from last month</div> */}
+                  <div className={"text-xs text-white"}>{balance > 0 ? "+12% from last month" : "⚠ Monitor Total Income"}</div>
               <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/20 rounded-full">
                 <div className="h-full bg-white/40 rounded-full w-3/4 animate-[expandWidth_2s_ease-out_1s]"></div>
               </div>
@@ -258,7 +259,9 @@ export default function Dashboard() {
               </div>
               <div className="text-white/80 text-sm font-medium mb-2">Total Expense</div>
               <div className="text-3xl font-black text-white mb-1">{formatCurrency(animatedValues.expense)}</div>
-              <div className="text-white/60 text-xs">-5% from last month</div>
+              {/* <div className="text-white/60 text-xs">-5% from last month</div> */}
+                  <div className={"text-xs text-white"}>{balance > 0 ? "-5% from last month" : "⚠ Monitor Total Expense"}</div>
+
               <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/20 rounded-full">
                 <div className="h-full bg-white/40 rounded-full w-2/3 animate-[expandWidth_2s_ease-out_1.2s]"></div>
               </div>
@@ -282,7 +285,7 @@ export default function Dashboard() {
               </div>
               <div className="text-white/80 text-sm font-medium mb-2">Current Balance</div>
               <div className="text-3xl font-black text-white mb-1">{showBalance ? formatCurrency(animatedValues.balance) : "••••••"}</div>
-              <div className={`text-xs ${balance >= 0 ? "text-green-200" : "text-red-200"}`}>{balance >= 0 ? "✓ Healthy balance" : "⚠ Monitor spending"}</div>
+              <div className={`text-xs ${balance > 0 ? "text-green-200" : "text-red-200"}`}>{balance > 0 ? "✓ Healthy balance" : "⚠ Monitor spending"}</div>
             </div>
           </div>
 
@@ -503,7 +506,7 @@ export default function Dashboard() {
       <Footer />
 
 
-      <AddTransactionModal showModal={showModal} setShowModal={setShowModal} />
+      <AddTransactionModal showModal={showModal} setShowModal={setShowModal} darkMode={darkMode} />
       <ConfirmationModal
         show={showDeleteModal}
         onClose={() => setShowDeleteModal(false)}
