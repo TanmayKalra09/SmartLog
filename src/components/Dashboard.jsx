@@ -18,7 +18,7 @@ export default function Dashboard() {
   const [isVisible, setIsVisible] = useState(false);
   const [hoveredCard, setHoveredCard] = useState(null);
   const [showBalance, setShowBalance] = useState(true);
-
+  const [sortCriteria, setSortCriteria] = useState("date-desc"); // New state for sorting
 
   const [animatedValues, setAnimatedValues] = useState({ income: 0, expense: 0, balance: 0 });
   const { currency, locale, setCurrency, setLocale } = useCurrency();
@@ -111,11 +111,31 @@ export default function Dashboard() {
     return () => clearInterval(timer);
   }, [income, expense, balance]);
 
-  const filteredTransactions = transactions.filter(t => {
-    const matchesSearch = t.note.toLowerCase().includes(searchTerm.toLowerCase()) || t.category.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === "All" || t.category === selectedCategory;
-    return matchesSearch && matchesCategory;
-  });
+  // Function to parse date string "DD/MM/YYYY" into a Date object
+  const parseDate = (dateString) => {
+    const [day, month, year] = dateString.split('/').map(Number);
+    return new Date(year, month - 1, day); // Month is 0-indexed in Date constructor
+  };
+
+  const filteredAndSortedTransactions = transactions
+    .filter(t => {
+      const matchesSearch = t.note.toLowerCase().includes(searchTerm.toLowerCase()) || t.category.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesCategory = selectedCategory === "All" || t.category === selectedCategory;
+      return matchesSearch && matchesCategory;
+    })
+    .sort((a, b) => {
+      // Sorting logic based on sortCriteria
+      if (sortCriteria === "date-desc") {
+        return parseDate(b.date).getTime() - parseDate(a.date).getTime();
+      } else if (sortCriteria === "date-asc") {
+        return parseDate(a.date).getTime() - parseDate(b.date).getTime();
+      } else if (sortCriteria === "amount-desc") {
+        return b.amount - a.amount;
+      } else if (sortCriteria === "amount-asc") {
+        return a.amount - b.amount;
+      }
+      return 0; // Default no sort
+    });
 
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat(locale, {
@@ -223,6 +243,7 @@ export default function Dashboard() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             {/* Income Card */}
+
 <Link to="/income-history" className="block">
   <div
     className={`relative p-6 rounded-2xl transition-all duration-500 cursor-pointer transform hover:scale-105 hover:-translate-y-2 ${hoveredCard === "income" ? "shadow-2xl shadow-green-200" : "shadow-lg"} ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
@@ -267,8 +288,10 @@ export default function Dashboard() {
 
               <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/20 rounded-full">
                 <div className="h-full bg-white/40 rounded-full w-2/3 animate-[expandWidth_2s_ease-out_1.2s]"></div>
+
               </div>
-            </div>
+            </Link>
+
 
             {/* Balance Card */}
             <div
@@ -346,6 +369,25 @@ export default function Dashboard() {
               </select>
               <ChevronDown className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 pointer-events-none z-10" />
             </div>
+
+            {/* New Sorting Dropdown */}
+            <div className="relative w-[100px]">
+              <select
+                value={sortCriteria}
+                onChange={(e) => setSortCriteria(e.target.value)}
+                className={`w-full pl-4 pr-8 py-4 rounded-2xl border focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300 backdrop-blur-sm appearance-none cursor-pointer relative z-0 ${darkMode
+                  ? "bg-gray-800 border-gray-700 text-white focus:ring-blue-900"
+                  : "bg-white/80 border-gray-200 text-gray-900"
+                  }`}
+              >
+                <option value="date-desc">Sort by Date (Newest)</option>
+                <option value="date-asc">Sort by Date (Oldest)</option>
+                <option value="amount-desc">Sort by Amount (Highest)</option>
+                <option value="amount-asc">Sort by Amount (Lowest)</option>
+              </select>
+              <ChevronDown className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 pointer-events-none z-10" />
+            </div>
+
             <div className={`${darkMode ? "flex items-center gap-3 bg-gray-800 backdrop-blur-md px-4 py-2 rounded-xl border border-gray-700" : "flex items-center gap-3 bg-white/70 backdrop-blur-md px-4 py-2 rounded-xl border border-gray-200"
               }`}>
               <button
@@ -376,7 +418,7 @@ export default function Dashboard() {
                 Recent Transactions
                 <span className={`text-sm font-normal px-3 py-1 rounded-full ${darkMode ? "text-gray-300 bg-gray-700" : "text-gray-500 bg-gray-100"
                   }`}>
-                  {filteredTransactions.length}
+                  {filteredAndSortedTransactions.length}
                 </span>
               </h3>
               <div className="flex gap-3">
@@ -406,7 +448,7 @@ export default function Dashboard() {
             </div>
 
             <div className="space-y-4">
-              {filteredTransactions.map((transaction, index) => (
+              {filteredAndSortedTransactions.map((transaction, index) => (
                 <div
                   key={transaction.id}
                   className={`group p-6 rounded-2xl shadow-lg hover:shadow-xl transform hover:scale-[1.02] hover:-translate-y-1 transition-all duration-300 border ${darkMode
@@ -486,7 +528,7 @@ export default function Dashboard() {
               ))}
             </div>
 
-            {filteredTransactions.length === 0 && (
+            {filteredAndSortedTransactions.length === 0 && (
               <div className="text-center py-12">
                 <div className={`w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-4 ${darkMode ? "bg-gray-800" : "bg-gray-100"
                   }`}>
