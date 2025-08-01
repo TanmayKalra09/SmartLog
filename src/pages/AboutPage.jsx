@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, User, Mail } from 'lucide-react';
-import Footer from './Footer'; 
+import Footer from '../components/Footer'; 
 
 const AboutPage = () => {
   const [isVisible, setIsVisible] = useState(false);

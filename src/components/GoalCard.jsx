@@ -1,5 +1,5 @@
 import React from 'react';
-import { useCurrency } from "./CurrencyContext";
+import { useCurrency } from "../context/CurrencyContext";
 import { Trash2, PiggyBank } from 'lucide-react';
 
 const GoalCard = ({ goal, darkMode, onDelete, onContribute }) => {

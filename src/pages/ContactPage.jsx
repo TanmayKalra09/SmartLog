@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom'; // Placeholder, navigation is handled by props
 import { Send, User, Mail } from 'lucide-react';
-import Footer from './Footer';
+import Footer from '../components/Footer';
 
 const ContactPage = ({ darkMode, navigateTo }) => {
   // State to control the animations
