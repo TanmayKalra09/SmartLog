@@ -198,7 +198,6 @@ export default function Dashboard() {
     link.href = url;
     link.download = 'transactions.csv';
     link.href = url;
-    link.download = 'transactions.csv';
     link.click()
     URL.revokeObjectURL(url);
   }
