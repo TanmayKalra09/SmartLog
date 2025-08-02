@@ -287,9 +287,9 @@ export default function Dashboard() {
 
               <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/20 rounded-full">
                 <div className="h-full bg-white/40 rounded-full w-2/3 animate-[expandWidth_2s_ease-out_1.2s]"></div>
-
+               </div>
               </div>
-            </Link>
+
 
 
             {/* Balance Card */}
@@ -545,7 +545,9 @@ export default function Dashboard() {
               </div>
             )}
           </div>
-        </div>
+        
+     
+     </div>
       </main>
       <Footer />
 
