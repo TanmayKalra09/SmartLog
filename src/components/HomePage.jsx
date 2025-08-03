@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import {Link} from 'react-router-dom';
 import {
   IndianRupee,
   TrendingUp,
@@ -49,24 +50,28 @@ export default function HomePage() {
       title: 'Track Expenses',
       desc: 'Monitor every rupee',
       bgColor: 'bg-blue-500',
+      link : '/track-expenses',
     },
     {
       icon: TrendingUp,
       title: 'Smart Analytics',
       desc: 'Insights that matter',
       bgColor: 'bg-gradient-to-br from-purple-400 to-pink-500',
+      link: '/smart-analytics',
     },
     {
       icon: BarChart3,
       title: 'Budget Goals',
       desc: 'Stay on track',
       bgColor: 'bg-gradient-to-br from-pink-400 to-red-500',
+      link: '/budget-goals',
     },
     {
       icon: PieChart,
       title: 'Visual Reports',
       desc: 'See your spending',
       bgColor: 'bg-gradient-to-br from-green-400 to-blue-500',
+      link: '/visual-reports',
     },
   ];
 
@@ -171,7 +176,9 @@ export default function HomePage() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-16 max-w-6xl mx-auto">
           {features.map((feature, index) => {
             const Icon = feature.icon;
+            
             return (
+              <Link to={feature.link} key={index}>
               <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 80, scale: 0.9 }}
@@ -228,6 +235,7 @@ export default function HomePage() {
                   {feature.desc}
                 </p>
               </motion.div>
+            </Link>
             );
           })}
         </div>

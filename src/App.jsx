@@ -9,6 +9,10 @@ import ContactPage from './components/ContactPage';
 import GoalsPage from './components/GoalsPage';
 import IncomeHistoryPage from './components/IncomeHistoryPage';
 import ExpenseHistoryPage from "./components/ExpenseHistoryPage";
+import TrackExpenses from './components/TrackExpenses';
+import SmartAnalytics from './components/SmartAnalytics';
+import BudgetGoals from './components/BudgetGoals';
+import VisualReports from './components/VisualReports';
 
 export default function App() {
 
@@ -25,6 +29,10 @@ export default function App() {
             <Route path="/goals" element={<GoalsPage />} />
             <Route path="/income-history" element={<IncomeHistoryPage />} />
             <Route path="/expense-history" element={<ExpenseHistoryPage />} />
+            <Route path="/track-expenses" element={<TrackExpenses />} /> 
+            <Route path="/smart-analytics" element={<SmartAnalytics />} /> 
+            <Route path="/budget-goals" element={<BudgetGoals />} /> 
+            <Route path="/visual-reports" element={<VisualReports />} />
           </Routes>
         </Router>
       </CurrencyProvider>
