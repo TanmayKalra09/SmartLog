@@ -58,12 +58,14 @@ const ContactPage = ({ darkMode, navigateTo }) => {
               style={{ transitionDelay: '600ms' }}
             >
               <a
-                href="mailto:tanmaykalra0910@gmail.com"
+                href="https://mail.google.com/mail/u/0/#inbox?compose=jrjtXPTrDpfWVhGcfxnCjtMfGPgSjfqgwcLCXQWdRdPgdsMznKqkwxHgvPJfZwbzGTlGjdnM"
                 className={`inline-flex items-center gap-3 px-8 py-4 rounded-lg transition-all duration-300 text-lg font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-1 ${
                   darkMode
                     ? 'bg-gray-700 text-gray-100 hover:bg-gray-600'
                     : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
                 }`}
+                target='_blank'
+                rel="noopener noreferrer"
               >
                 <Send size={20} />
                 Send us an Email
