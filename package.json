@@ -10,7 +10,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@emailjs/browser": "^4.4.1",
     "@react-pdf/renderer": "^4.3.0",
+    "@splinetool/react-spline": "^4.1.0",
     "@tailwindcss/vite": "^4.1.11",
     "framer": "^2.4.1",
     "lucide-react": "^0.525.0",
