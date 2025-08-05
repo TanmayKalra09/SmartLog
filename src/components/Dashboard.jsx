@@ -18,19 +18,21 @@ export default function Dashboard() {
   const [isVisible, setIsVisible] = useState(false);
   const [hoveredCard, setHoveredCard] = useState(null);
   const [showBalance, setShowBalance] = useState(true);
-
+  const [sortCriteria, setSortCriteria] = useState("date-desc");
 
   const [animatedValues, setAnimatedValues] = useState({ income: 0, expense: 0, balance: 0 });
   const { currency, locale, setCurrency, setLocale } = useCurrency();
+  
   const currencies = [
-    { code: "INR", locale: "en-IN" },
-    { code: "USD", locale: "en-US" },
-    { code: "EUR", locale: "de-DE" },
-    { code: "BRL", locale: "pt-BR" },
-    { code: "JPY", locale: "ja-JP" },
+    { code: "INR", locale: "en-IN", symbol: "₹" },
+    { code: "USD", locale: "en-US", symbol: "$" },
+    { code: "EUR", locale: "de-DE", symbol: "€" },
+    { code: "BRL", locale: "pt-BR", symbol: "R$" },
+    { code: "JPY", locale: "ja-JP", symbol: "¥" },
   ];
 
   const currentIndex = currencies.findIndex((c) => c.code === currency);
+  const currentCurrency = currencies.find((c) => c.code === currency) || currencies[0];
 
   const handleChange = (direction) => {
     const newIndex =
@@ -43,12 +45,17 @@ export default function Dashboard() {
     setLocale(next.locale);
   };
 
-  const symbol = (0).toLocaleString(locale, {
-    style: "currency",
-    currency,
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).replace(/\d/g, "").trim();
+  // New function for dropdown currency selection
+  const handleCurrencySelect = (e) => {
+    const selectedCode = e.target.value;
+    const selectedCurrency = currencies.find(c => c.code === selectedCode);
+    if (selectedCurrency) {
+      setCurrency(selectedCurrency.code);
+      setLocale(selectedCurrency.locale);
+    }
+  };
+
+  const symbol = currentCurrency.symbol;
 
   const [darkMode, setDarkMode] = useState(false);
 
@@ -111,11 +118,31 @@ export default function Dashboard() {
     return () => clearInterval(timer);
   }, [income, expense, balance]);
 
-  const filteredTransactions = transactions.filter(t => {
-    const matchesSearch = t.note.toLowerCase().includes(searchTerm.toLowerCase()) || t.category.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === "All" || t.category === selectedCategory;
-    return matchesSearch && matchesCategory;
-  });
+  // Function to parse date string "DD/MM/YYYY" into a Date object
+  const parseDate = (dateString) => {
+    const [day, month, year] = dateString.split('/').map(Number);
+    return new Date(year, month - 1, day); // Month is 0-indexed in Date constructor
+  };
+
+  const filteredAndSortedTransactions = transactions
+    .filter(t => {
+      const matchesSearch = t.note.toLowerCase().includes(searchTerm.toLowerCase()) || t.category.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesCategory = selectedCategory === "All" || t.category === selectedCategory;
+      return matchesSearch && matchesCategory;
+    })
+    .sort((a, b) => {
+      // Sorting logic based on sortCriteria
+      if (sortCriteria === "date-desc") {
+        return parseDate(b.date).getTime() - parseDate(a.date).getTime();
+      } else if (sortCriteria === "date-asc") {
+        return parseDate(a.date).getTime() - parseDate(b.date).getTime();
+      } else if (sortCriteria === "amount-desc") {
+        return b.amount - a.amount;
+      } else if (sortCriteria === "amount-asc") {
+        return a.amount - b.amount;
+      }
+      return 0; // Default no sort
+    });
 
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat(locale, {
@@ -223,46 +250,53 @@ export default function Dashboard() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             {/* Income Card */}
-            <div
-              className={`relative p-6 rounded-2xl transition-all duration-500 cursor-pointer transform hover:scale-105 hover:-translate-y-2 ${hoveredCard === "income" ? "shadow-2xl shadow-green-200" : "shadow-lg"
+            <Link to="/income-history">
+              <div
+                className={`relative p-6 rounded-2xl transition-all duration-500 cursor-pointer transform hover:scale-105 hover:-translate-y-2 ${
+                  hoveredCard === "income" ? "shadow-2xl shadow-green-200" : "shadow-lg"
                 } ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
-              style={{
-                background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
-                animationDelay: "0.2s",
-              }}
-              onMouseEnter={() => setHoveredCard("income")}
-              onMouseLeave={() => setHoveredCard(null)}>
-              <div className="absolute top-4 right-4">
-                <TrendingUp className="w-8 h-8 text-white/80" />
+                style={{
+                  background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
+                  animationDelay: "0.2s",
+                }}
+                onMouseEnter={() => setHoveredCard("income")}
+                onMouseLeave={() => setHoveredCard(null)}
+              >
+                <div className="absolute top-4 right-4">
+                  <TrendingUp className="w-8 h-8 text-white/80" />
+                </div>
+                <div className="text-white/80 text-sm font-medium mb-2">Total Income</div>
+                <div className="text-3xl font-black text-white mb-1">
+                  {formatCurrency(animatedValues.income)}
+                </div>
+                <div className="text-white/60 text-xs">+12% from last month</div>
+               
               </div>
-              <div className="text-white/80 text-sm font-medium mb-2">Total Income</div>
-              <div className="text-3xl font-black text-white mb-1">{formatCurrency(animatedValues.income)}</div>
-              <div className="text-white/60 text-xs">+12% from last month</div>
-              <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/20 rounded-full">
-                <div className="h-full bg-white/40 rounded-full w-3/4 animate-[expandWidth_2s_ease-out_1s]"></div>
-              </div>
-            </div>
+            </Link>
+
 
             {/* Expense Card */}
-            <div
-              className={`relative p-6 rounded-2xl transition-all duration-500 cursor-pointer transform hover:scale-105 hover:-translate-y-2 ${hoveredCard === "expense" ? "shadow-2xl shadow-red-200" : "shadow-lg"
-                } ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
-              style={{
-                background: "linear-gradient(135deg, #ef4444 0%, #dc2626 100%)",
-                animationDelay: "0.4s",
-              }}
-              onMouseEnter={() => setHoveredCard("expense")}
-              onMouseLeave={() => setHoveredCard(null)}>
-              <div className="absolute top-4 right-4">
-                <TrendingDown className="w-8 h-8 text-white/80" />
+            <Link to="/expense-history" className="block">
+              <div
+                className={`relative p-6 rounded-2xl transition-all duration-500 cursor-pointer transform hover:scale-105 hover:-translate-y-2 ${hoveredCard === "expense" ? "shadow-2xl shadow-red-200" : "shadow-lg"
+                  } ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
+                style={{
+                  background: "linear-gradient(135deg, #ef4444 0%, #dc2626 100%)",
+                  animationDelay: "0.4s",
+                }}
+                onMouseEnter={() => setHoveredCard("expense")}
+                onMouseLeave={() => setHoveredCard(null)}
+              >
+                <div className="absolute top-4 right-4">
+                  <TrendingDown className="w-8 h-8 text-white/80" />
+                </div>
+                <div className="text-white/80 text-sm font-medium mb-2">Total Expense</div>
+                <div className="text-3xl font-black text-white mb-1">{formatCurrency(animatedValues.expense)}</div>
+                <div className="text-white/60 text-xs">-5% from last month</div>
+               
               </div>
-              <div className="text-white/80 text-sm font-medium mb-2">Total Expense</div>
-              <div className="text-3xl font-black text-white mb-1">{formatCurrency(animatedValues.expense)}</div>
-              <div className="text-white/60 text-xs">-5% from last month</div>
-              <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/20 rounded-full">
-                <div className="h-full bg-white/40 rounded-full w-2/3 animate-[expandWidth_2s_ease-out_1.2s]"></div>
-              </div>
-            </div>
+            </Link>
+
 
             {/* Balance Card */}
             <div
@@ -321,13 +355,13 @@ export default function Dashboard() {
               />
             </div>
 
-            <div className="relative min-w-[200px]">
+            <div className="relative min-w-[100px]">
               <Filter className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 pointer-events-none z-10" />
               <select
                 value={selectedCategory}
 
                 onChange={(e) => setSelectedCategory(e.target.value)}
-                className={`w-full pl-12 pr-8 py-4 rounded-2xl border focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300 backdrop-blur-sm appearance-none cursor-pointer relative z-0 ${darkMode
+                className={`w-full pl-12 pr-11 py-4 rounded-2xl border focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300 backdrop-blur-sm appearance-none cursor-pointer relative z-0 ${darkMode
                   ? "bg-gray-800 border-gray-700 text-white focus:ring-blue-900"
                   : "bg-white/80 border-gray-200 text-gray-900"
                   }`}
@@ -340,26 +374,45 @@ export default function Dashboard() {
               </select>
               <ChevronDown className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 pointer-events-none z-10" />
             </div>
-            <div className={`${darkMode ? "flex items-center gap-3 bg-gray-800 backdrop-blur-md px-4 py-2 rounded-xl border border-gray-700" : "flex items-center gap-3 bg-white/70 backdrop-blur-md px-4 py-2 rounded-xl border border-gray-200"
-              }`}>
-              <button
-                onClick={() => handleChange("prev")}
-                className="p-1 rounded hover:bg-gray-200 active:bg-gray-300 transition"
-                aria-label="Previous currency"
+
+            {/* Sorting Dropdown */}
+            <div className="relative min-w-[200px]">
+              <select
+                value={sortCriteria}
+                onChange={(e) => setSortCriteria(e.target.value)}
+                className={`w-full pl-4 pr-8 py-4 rounded-2xl border focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300 backdrop-blur-sm appearance-none cursor-pointer relative z-0 ${darkMode
+                  ? "bg-gray-800 border-gray-700 text-white focus:ring-blue-900"
+                  : "bg-white/80 border-gray-200 text-gray-900"
+                  }`}
               >
-                <ChevronLeft size={20} className="text-gray-400" />
-              </button>
-              <span className="text-xl text-green-600 text-center select-none">
-                {symbol}
-              </span>
-              <button
-                onClick={() => handleChange("next")}
-                className="p-1 rounded hover:bg-gray-200 active:bg-gray-300 transition"
-                aria-label="Next currency"
-              >
-                <ChevronRight size={20} className="text-gray-400" />
-              </button>
+                <option value="date-desc">Sort by Date (Newest)</option>
+                <option value="date-asc">Sort by Date (Oldest)</option>
+                <option value="amount-desc">Sort by Amount (Highest)</option>
+                <option value="amount-asc">Sort by Amount (Lowest)</option>
+              </select>
+              <ChevronDown className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 pointer-events-none z-10" />
             </div>
+
+            {/* Currency Dropdown */}
+            <div className="relative w-[100px]">
+              <select
+                value={currency}
+                onChange={handleCurrencySelect}
+                className={`w-full pl-4 pr-8 py-4 rounded-2xl border focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300 backdrop-blur-sm appearance-none cursor-pointer relative z-0 ${darkMode
+                  ? "bg-gray-800 border-gray-700 text-white focus:ring-blue-900"
+                  : "bg-white/80 border-gray-200 text-gray-900"
+                  }`}
+              >
+                {currencies.map((curr) => (
+                  <option key={curr.code} value={curr.code}>
+                    {curr.symbol} {curr.code}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 pointer-events-none z-10" />
+            </div>
+
+            
           </div>
 
           <div className={`transition-all duration-1000 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`} style={{ animationDelay: "1s" }}>
@@ -370,117 +423,143 @@ export default function Dashboard() {
                 Recent Transactions
                 <span className={`text-sm font-normal px-3 py-1 rounded-full ${darkMode ? "text-gray-300 bg-gray-700" : "text-gray-500 bg-gray-100"
                   }`}>
-                  {filteredTransactions.length}
+                  {filteredAndSortedTransactions.length}
                 </span>
               </h3>
-              <div className="flex gap-3">
-              
-              {
-                transactions.length > 0 && (
-                  <button 
-                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-indigo-100 text-indigo-700 hover:bg-indigo-200 hover:text-indigo-900 transition-all duration-200 shadow-sm hover:shadow-md mt-2 md:mt-0 whitespace-nowrap mb-2 cursor-pointer"
+              <div className="flex flex-wrap gap-3 mb-6">
+              {transactions.length > 0 && (
+                <button 
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-indigo-100 text-indigo-700 hover:bg-indigo-200 hover:text-indigo-900 transition-all duration-200 shadow-sm hover:shadow-md whitespace-nowrap cursor-pointer"
                   onClick={handleExportCSV}                  
-                  >
-                      <Download className="h-5 w-5" />
-                      Download Transactions in CSV
-                  </button>
-                )
-              }
+                >
+                  <Download className="h-5 w-5" />
+                  Download Transactions in CSV
+                </button>
+              )}
+
               {transactions.length > 0 && (
                 <PDFDownloadLink document={<TransactionPDF transactions={transactions} />} fileName="Transaction-History.pdf">
                   {() => (
-                    <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-indigo-100 text-indigo-700 hover:bg-indigo-200 hover:text-indigo-900 transition-all duration-200 shadow-sm hover:shadow-md mt-2 md:mt-0 whitespace-nowrap mb-2 cursor-pointer">
+                    <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-indigo-100 text-indigo-700 hover:bg-indigo-200 hover:text-indigo-900 transition-all duration-200 shadow-sm hover:shadow-md whitespace-nowrap cursor-pointer">
                       <Download className="h-5 w-5" />
                       Download Transactions History
                     </button>
                   )}
                 </PDFDownloadLink>
               )}
-              </div>
+            </div>
             </div>
 
             <div className="space-y-4">
-              {filteredTransactions.map((transaction, index) => (
+              {filteredAndSortedTransactions.map((transaction, index) => (
                 <div
-                  key={transaction.id}
-                  className={`group p-6 rounded-2xl shadow-lg hover:shadow-xl transform hover:scale-[1.02] hover:-translate-y-1 transition-all duration-300 border ${darkMode
+                key={transaction.id}
+                className={`group p-4 sm:p-6 rounded-2xl shadow-lg hover:shadow-xl transform hover:scale-[1.02] hover:-translate-y-1 transition-all duration-300 border ${
+                  darkMode
                     ? "bg-gray-800 border-gray-700 hover:border-gray-600"
                     : "bg-white/80 border-gray-100 hover:border-gray-200"
-                    }`}
-                  style={{ animationDelay: `${1.2 + index * 0.1}s` }}
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                      <div
-                        className={`w-12 h-12 rounded-2xl flex items-center justify-center text-xl ${transaction.type === "Income"
+                }`}
+                style={{ animationDelay: `${1.2 + index * 0.1}s` }}
+              >
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                  {/* LEFT SIDE */}
+                  <div className="flex items-start gap-4">
+                    <div
+                      className={`w-12 h-12 rounded-2xl flex items-center justify-center text-xl ${
+                        transaction.type === "Income"
                           ? "bg-green-100 text-green-600 group-hover:bg-green-200"
                           : "bg-red-100 text-red-600 group-hover:bg-red-200"
-                          } group-hover:scale-110 transition-all duration-300 ${darkMode
-                            ? transaction.type === "Income"
-                              ? "dark:bg-green-900/30 dark:text-green-400 group-hover:dark:bg-green-900/50"
-                              : "dark:bg-red-900/30 dark:text-red-400 group-hover:dark:bg-red-900/50"
-                            : ""
-                          }`}
-                      >
-                        {getTransactionIcon(transaction.category)}
-                      </div>
-                      <div>
-                        <div className={`font-bold group-hover:text-blue-600 transition-colors duration-300 ${darkMode ? "text-gray-100" : "text-gray-800"
-                          }`}>
-                          {transaction.note}
-                        </div>
-                        <div className={`flex items-center gap-2 text-sm ${darkMode ? "text-gray-400" : "text-gray-500"
-                          }`}>
-                          <Tag className="w-4 h-4" />
-                          {transaction.category}
-                          <Calendar className="w-4 h-4 ml-2" />
-                          {(() => {
-                            const [dd, mm, yyyy] = transaction.date.split("/");
-                            return `${dd}/${mm}/${yyyy}`;
-                          })()}
-                        </div>
-                      </div>
+                      } group-hover:scale-110 transition-all duration-300 ${
+                        darkMode
+                          ? transaction.type === "Income"
+                            ? "dark:bg-green-900/30 dark:text-green-400 group-hover:dark:bg-green-900/50"
+                            : "dark:bg-red-900/30 dark:text-red-400 group-hover:dark:bg-red-900/50"
+                          : ""
+                      }`}
+                    >
+                      {getTransactionIcon(transaction.category)}
                     </div>
-                    <div className="text-right flex items-center justify-end">
+                    <div className="flex flex-col gap-1">
+                      <div
+                        className={`font-bold group-hover:text-blue-600 transition-colors duration-300 ${
+                          darkMode ? "text-gray-100" : "text-gray-800"
+                        }`}
+                      >
+                        {transaction.note?.trim()
+                          ? transaction.note
+                          : transaction.type === "Income"
+                          ? "Money added 🎉"
+                          : "Money deducted 😯"}
+                      </div>
 
                       <div
-                        className={`text-2xl font-black group-hover:scale-110 transition-transform duration-300 ${transaction.type === "Expense"
-                          ? "text-red-600 dark:text-red-400"
-                          : "text-green-600 dark:text-green-400"
-                          }`}
+                        className={`flex flex-wrap items-center gap-2 text-sm ${
+                          darkMode ? "text-gray-400" : "text-gray-500"
+                        }`}
                       >
-                        {transaction.type === "Expense" ? "-" : "+"}
-                        {formatCurrency(transaction.amount)}
+                        <Tag className="w-4 h-4" />
+                        {transaction.category}
+                        <Calendar className="w-4 h-4 ml-2" />
+                        {(() => {
+                          const [dd, mm, yyyy] = transaction.date.split("/");
+                          return `${dd}/${mm}/${yyyy}`;
+                        })()}
                       </div>
-                      <button
-                        onClick={() => handleDelete(transaction.id)}
-                        className={`ml-2 transition-colors ${darkMode ? "text-gray-500 hover:text-red-500" : "text-gray-400 hover:text-red-600"
-                          }`}
-                        title="Delete"
-                      >
-                        <Trash2 className="w-5 h-5" />
-                      </button>
                     </div>
                   </div>
 
-                  <div className={`mt-4 h-1 rounded-full overflow-hidden ${darkMode ? "bg-gray-700" : "bg-gray-100"
-                    }`}>
+                  {/* RIGHT SIDE */}
+                  <div className="flex items-center justify-between sm:justify-end gap-2 sm:gap-4">
                     <div
-
-                      className={`h-full rounded-full transition-all duration-1000 ${transaction.type === "Income"
-                        ? "bg-green-400 dark:bg-green-500"
-                        : "bg-red-400 dark:bg-red-500"
-                        }`}
-                      style={{
-                        width: `${Math.min((transaction.amount / maxAmount) * 100, 100)}%`,
-                        animationDelay: `${1.5 + index * 0.1}s`,
-                      }}></div>
+                      className={`text-xl sm:text-2xl font-black group-hover:scale-110 transition-transform duration-300 ${
+                        transaction.type === "Expense"
+                          ? "text-red-600 dark:text-red-400"
+                          : "text-green-600 dark:text-green-400"
+                      }`}
+                    >
+                      {transaction.type === "Expense" ? "- " : "+ "}
+                      {formatCurrency(transaction.amount)}
+                    </div>
+                    <button
+                      onClick={() => handleDelete(transaction.id)}
+                      className={`transition-colors ${
+                        darkMode
+                          ? "text-gray-500 hover:text-red-500"
+                          : "text-gray-400 hover:text-red-600"
+                      }`}
+                      title="Delete"
+                    >
+                      <Trash2 className="w-5 h-5" />
+                    </button>
                   </div>
                 </div>
+
+                {/* PROGRESS BAR */}
+                <div
+                  className={`mt-4 h-1 rounded-full overflow-hidden ${
+                    darkMode ? "bg-gray-700" : "bg-gray-100"
+                  }`}
+                >
+                  <div
+                    className={`h-full rounded-full transition-all duration-1000 ${
+                      transaction.type === "Income"
+                        ? "bg-green-400 dark:bg-green-500"
+                        : "bg-red-400 dark:bg-red-500"
+                    }`}
+                    style={{
+                      width: `${Math.min(
+                        (transaction.amount / maxAmount) * 100,
+                        100
+                      )}%`,
+                      animationDelay: `${1.5 + index * 0.1}s`,
+                    }}
+                  ></div>
+                </div>
+              </div>
               ))}
             </div>
 
-            {filteredTransactions.length === 0 && (
+            {filteredAndSortedTransactions.length === 0 && (
               <div className="text-center py-12">
                 <div className={`w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-4 ${darkMode ? "bg-gray-800" : "bg-gray-100"
                   }`}>
