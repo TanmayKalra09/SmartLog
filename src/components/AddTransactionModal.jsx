@@ -162,7 +162,7 @@ const handleSubmit = async (e) => {
           <div className="p-6 space-y-6">
            
             <div className="space-y-2">
-                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">Amount</label>
+                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">Amount*</label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 font-medium">{getCurrencySymbol(currency,locale)}</span>
                 <input
@@ -183,7 +183,7 @@ const handleSubmit = async (e) => {
 
 
             <div className="space-y-2 relative">
-              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">Category</label>
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">Category*</label>
               <input
                 type="text"
                 value={form.category}
@@ -223,7 +223,7 @@ const handleSubmit = async (e) => {
 
     
             <div className="space-y-2">
-              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">Type</label>
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">Type*</label>
               <div className="flex bg-gray-100 dark:bg-gray-700 rounded-xl p-1">
                 {['Income', 'Expense'].map((type) => (
                   <button
@@ -273,6 +273,7 @@ const handleSubmit = async (e) => {
                 value={form.note}
                 onChange={e => handleInputChange("note", e.target.value)}
                 rows={3}
+                maxLength={30}
                 className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-700 rounded-xl resize-none transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent hover:border-gray-300 dark:hover:border-gray-600 dark:bg-gray-700 dark:text-white"
                 placeholder="Add a note about this transaction..."
               />
