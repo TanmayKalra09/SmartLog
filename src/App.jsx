@@ -1,9 +1,12 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import HomePage from './components/HomePage';
-import Dashboard from './components/Dashboard';
-import { TransactionProvider } from './components/TransactionContext';
-import { Toaster } from 'react-hot-toast';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import HomePage from "./components/HomePage";
+import Dashboard from "./components/Dashboard";
+import { TransactionProvider } from "./components/TransactionContext";
+import { Toaster } from "react-hot-toast";
 import { CurrencyProvider } from "./components/CurrencyContext";
+
+import UndoTransaction from "./components/undoTransactions";
+
 import AboutPage from './components/AboutPage';
 import ContactPage from './components/ContactPage';
 import GoalsPage from './components/GoalsPage';
@@ -15,7 +18,6 @@ import BudgetGoals from './components/BudgetGoals';
 import VisualReports from './components/VisualReports';
 
 export default function App() {
-
   return (
     <TransactionProvider>
       <CurrencyProvider>
@@ -23,7 +25,7 @@ export default function App() {
           <Toaster />
           <Routes>
             <Route path="/" element={<HomePage />} />
-            <Route path="/dashboard" element={<Dashboard/>} />
+            <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/about" element={<AboutPage />} />
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/goals" element={<GoalsPage />} />
@@ -35,6 +37,7 @@ export default function App() {
             <Route path="/visual-reports" element={<VisualReports />} />
           </Routes>
         </Router>
+        <UndoTransaction />
       </CurrencyProvider>
     </TransactionProvider>
   );

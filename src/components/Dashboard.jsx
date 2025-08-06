@@ -1,23 +1,46 @@
-import { Plus, TrendingUp, TrendingDown, Wallet, IndianRupee, Calendar, Tag, Filter, Search, Eye, EyeOff, ChevronDown, ChevronLeft, ChevronRight, Trash2, Download, Moon, Sun, Target } from "lucide-react";
-import { useTransactions } from "./TransactionContext";
-import { useCurrency } from "./CurrencyContext";
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import AddTransactionModal from "./AddTransactionModal";
 import ConfirmationModal from "./ConfirmationModal";
 import Footer from "./Footer";
-// Download imports
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import TransactionPDF from "./TransactionPDF";
-import { Link } from "react-router-dom";
+
+import {
+  Plus,
+  TrendingUp,
+  TrendingDown,
+  Wallet,
+  Calendar,
+  Tag,
+  Filter,
+  Search,
+  Eye,
+  EyeOff,
+  Trash2,
+  Download,
+  Moon,
+  Sun,
+  Target,
+} from "lucide-react";
+
+import { useTransactions } from "./TransactionContext";
+import { useCurrency } from "./CurrencyContext";
 
 export default function Dashboard() {
-  const { transactions, income, expense, setTransactions, deleteTransaction } = useTransactions();
+  const { transactions, income, expense, deleteTransaction, undoDelete } =
+    useTransactions();
+  const { currencySymbol } = useCurrency();
+
   const [showModal, setShowModal] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [transactionToDelete, setTransactionToDelete] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [isVisible, setIsVisible] = useState(false);
   const [hoveredCard, setHoveredCard] = useState(null);
   const [showBalance, setShowBalance] = useState(true);
+
   const [sortCriteria, setSortCriteria] = useState("date-desc");
 
   const [animatedValues, setAnimatedValues] = useState({ income: 0, expense: 0, balance: 0 });
@@ -58,40 +81,16 @@ export default function Dashboard() {
   const symbol = currentCurrency.symbol;
 
   const [darkMode, setDarkMode] = useState(false);
-
-  // Toggle dark mode
-  const toggleDarkMode = () => {
-    setDarkMode(!darkMode);
-  };
-
-  // Apply dark mode class to body
-  useEffect(() => {
-    if (darkMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  }, [darkMode]);
+  const [animatedValues, setAnimatedValues] = useState({
+    income: 0,
+    expense: 0,
+    balance: 0,
+  });
 
   const balance = income - expense;
-  const defaultCategories = ["Food", "Entertainment", "Utilities", "Income", "Transport", "Shopping", "Health", "Education"];
-  const categories = ["All", ...new Set(transactions.map(t => t.category))];
+  const categories = ["All", ...new Set(transactions.map((t) => t.category))];
 
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [transactionToDelete, setTransactionToDelete] = useState(null);
-
-  const handleDelete = id => {
-    setTransactionToDelete(id);
-    setShowDeleteModal(true);
-  };
-
-  const handleConfirmDelete = () => {
-    deleteTransaction(transactionToDelete);
-
-    setShowDeleteModal(false)
-    setTransactionToDelete(null)
-  }
-
+  // Animate values
   useEffect(() => {
     setIsVisible(true);
     const duration = 2000;
@@ -118,18 +117,22 @@ export default function Dashboard() {
     return () => clearInterval(timer);
   }, [income, expense, balance]);
 
+  const filteredTransactions = transactions.filter((t) => {
+    const matchesSearch =
+      t.note.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      t.category.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory =
+      selectedCategory === "All" || t.category === selectedCategory;
+    return matchesSearch && matchesCategory;
+  });
+
   // Function to parse date string "DD/MM/YYYY" into a Date object
   const parseDate = (dateString) => {
     const [day, month, year] = dateString.split('/').map(Number);
     return new Date(year, month - 1, day); // Month is 0-indexed in Date constructor
   };
 
-  const filteredAndSortedTransactions = transactions
-    .filter(t => {
-      const matchesSearch = t.note.toLowerCase().includes(searchTerm.toLowerCase()) || t.category.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesCategory = selectedCategory === "All" || t.category === selectedCategory;
-      return matchesSearch && matchesCategory;
-    })
+ 
     .sort((a, b) => {
       // Sorting logic based on sortCriteria
       if (sortCriteria === "date-desc") {
@@ -144,15 +147,10 @@ export default function Dashboard() {
       return 0; // Default no sort
     });
 
-  const formatCurrency = (amount) => {
-    return new Intl.NumberFormat(locale, {
-      style: "currency",
-      currency,
-      minimumFractionDigits: 0,
-    }).format(amount);
-  };
+  const formatCurrency = (amount) =>
+    `${currencySymbol}${amount.toLocaleString("en-IN")}`;
 
-  const getTransactionIcon = category => {
+  const getTransactionIcon = (category) => {
     const icons = {
       Food: "🍽️",
       Entertainment: "🎬",
@@ -162,91 +160,55 @@ export default function Dashboard() {
       Shopping: "🛍️",
       Health: "🏥",
       Education: "📚",
-      Savings: "🏦",
     };
-
     return icons[category] || "📝";
   };
-  // To prevent scrolling background when transaction forms open up
-  useEffect(() => {
-    if (showModal) {
-      document.body.classList.add("overflow-hidden");
-    } else {
-      document.body.classList.remove("overflow-hidden");
+
+  const handleDeleteClick = (id) => {
+    setTransactionToDelete(id);
+    setShowConfirmModal(true);
+  };
+
+  const confirmDelete = () => {
+    if (transactionToDelete) {
+      deleteTransaction(transactionToDelete);
+      setTransactionToDelete(null);
+      setShowConfirmModal(false);
     }
-
-    return () => {
-      document.body.classList.remove("overflow-hidden");
-    };
-  }, [showModal]);
-
-
-  const maxAmount = Math.max(1, ...transactions.map(t => t.amount));
-
-  const convertToCSV = (transactions) => {
-    const headers = ['Date', 'Type', 'Category', 'Amount', 'Note'];
-    const rows = transactions.map(t => {
-      const note = t.note.includes(',') ? `"${t.note}"` : t.note;
-      return [t.date, t.type, t.category, t.amount, note]
-    })
-
-    const headerRow = headers.join(',')
-    const rowStrings = rows.map(r => 
-      r.join(',')
-    )
-
-    return [headerRow, ...rowStrings].join('\n')
-  }
-
-  const downloadCSV = (csvString) => {
-    const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' })
-    const url = URL.createObjectURL(blob)
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = 'transactions.csv';
-    link.href = url;
-    link.download = 'transactions.csv';
-    link.click()
-    URL.revokeObjectURL(url);
-  }
-
-  const handleExportCSV = () => {
-    const s = convertToCSV(transactions)
-    downloadCSV(s)
-  }
+  };
 
   return (
-    <div className={`min-h-screen flex flex-col transition-colors duration-300 ${darkMode
-      ? "bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-gray-100"
-      : "bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 text-gray-900"
-      }`}>
-      <main className="flex-1 w-full p-6 mb-40">
-        <div className="max-w-6xl mx-auto">
-
-          <div className="flex justify-between items-start mb-2">
-            <div className={`transition-all duration-1000 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4"
-              }`}>
-              <h2 className="text-4xl font-black bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-2">
-                Dashboard
-              </h2>
-              <p className={`transition-colors duration-300 ${darkMode ? "text-gray-400" : "text-gray-600"
-                } mb-8`}>
-                Track your financial journey with smart insights
-              </p>
-            </div>
-
-            {/* Dark Mode Toggle Button */}
+    <div
+      className={`min-h-screen ${
+        darkMode
+          ? "bg-gray-900 text-white"
+          : "bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 text-gray-900"
+      } p-6 transition-all`}
+    >
+      <div className="max-w-6xl mx-auto">
+        {/* Header */}
+        <div
+          className={`transition-all duration-1000 ${
+            isVisible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4"
+          }`}
+        >
+          <div className="flex items-center justify-between">
+            <h2 className="text-4xl font-black bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-2">
+              Dashboard
+            </h2>
             <button
-              onClick={toggleDarkMode}
-              className={`p-2 rounded-full transition-all duration-300 ${darkMode
-                ? "bg-gray-700 text-yellow-300 hover:bg-gray-600"
-                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                }`}
-              aria-label="Toggle dark mode"
+              onClick={() => setDarkMode(!darkMode)}
+              className="p-2 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition"
+              title="Toggle Theme"
             >
-              {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+              {darkMode ? <Sun className="w-6 h-6" /> : <Moon className="w-6 h-6" />}
             </button>
           </div>
+          <p className="text-gray-600 dark:text-gray-400 mb-8">
+            Track your financial journey with smart insights
+          </p>
+        </div>
+
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             {/* Income Card */}
@@ -320,40 +282,43 @@ export default function Dashboard() {
             </div>
           </div>
 
+          {/* Expense */}
           <div
-            className={`flex flex-col md:flex-row gap-4 mb-8 transition-all duration-1000 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}
-            style={{ animationDelay: "0.8s" }}>
-
-            <Link
-              to="/goals"
-              className="group relative bg-gradient-to-r from-green-500 to-cyan-500 text-white px-8 py-4 rounded-2xl font-bold shadow-lg hover:shadow-xl transform hover:scale-105 hover:-translate-y-1 transition-all duration-300 flex items-center gap-3 cursor-pointer"
-            >
-              <Target className="w-5 h-5 transition-transform group-hover:rotate-12" />
-              View Goals
-            </Link>
-
-            <button
-              onClick={() => setShowModal(true)}
-              className="group relative bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-2xl font-bold shadow-lg hover:shadow-xl transform hover:scale-105 hover:-translate-y-1 transition-all duration-300 flex items-center gap-3 cursor-pointer">
-              <Plus className="w-5 h-5 transition-transform group-hover:rotate-90" />
-              Add Transaction
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl blur opacity-0 group-hover:opacity-50 transition-opacity duration-300"></div>
-            </button>
-
-            <div className="relative flex-1">
-              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-              <input
-                type="text"
-                placeholder="Search transactions..."
-                value={searchTerm}
-
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className={`w-full pl-12 pr-4 py-4 rounded-2xl border focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300 backdrop-blur-sm ${darkMode
-                  ? "bg-gray-800 border-gray-700 text-white placeholder-gray-400 focus:ring-blue-900"
-                  : "bg-white/80 border-gray-200 text-gray-900 placeholder-gray-500"
-                  }`}
-              />
+            className={`relative p-6 rounded-2xl transition-all duration-500 cursor-pointer transform hover:scale-105 hover:-translate-y-2 ${
+              hoveredCard === "expense" ? "shadow-2xl shadow-red-200" : "shadow-lg"
+            }`}
+            style={{
+              background: "linear-gradient(135deg, #ef4444 0%, #dc2626 100%)",
+            }}
+            onMouseEnter={() => setHoveredCard("expense")}
+            onMouseLeave={() => setHoveredCard(null)}
+          >
+            <div className="absolute top-4 right-4">
+              <TrendingDown className="w-8 h-8 text-white/80" />
             </div>
+            <div className="text-white/80 text-sm font-medium mb-2">
+              Total Expense
+            </div>
+            <div className="text-3xl font-black text-white mb-1">
+              {formatCurrency(animatedValues.expense)}
+            </div>
+          </div>
+
+          {/* Balance */}
+          <div
+            className="relative p-6 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600"
+          >
+            <div className="absolute top-4 right-4 flex items-center gap-2">
+              <button
+                onClick={() => setShowBalance(!showBalance)}
+                className="text-white/80 hover:text-white transition-colors"
+              >
+                {showBalance ? <Eye className="w-6 h-6" /> : <EyeOff className="w-6 h-6" />}
+              </button>
+              <Wallet className="w-8 h-8 text-white/80" />
+            </div>
+            <div className="text-white/80 text-sm font-medium mb-2">
+              Current Balance
 
             <div className="relative min-w-[100px]">
               <Filter className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 pointer-events-none z-10" />
@@ -449,7 +414,85 @@ export default function Dashboard() {
               )}
             </div>
             </div>
+            <div className="text-3xl font-black text-white mb-1">
+              {showBalance ? formatCurrency(animatedValues.balance) : "••••••"}
+            </div>
+          </div>
+        </div>
 
+        {/* Actions */}
+        <div className="flex flex-col md:flex-row gap-4 mb-8">
+          <button
+            onClick={() => setShowModal(true)}
+            className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-2xl font-bold shadow-lg hover:shadow-xl"
+          >
+            <Plus className="w-5 h-5 inline-block mr-2" />
+            Add Transaction
+          </button>
+
+          <PDFDownloadLink
+            document={<TransactionPDF transactions={transactions} />}
+            fileName="transactions.pdf"
+          >
+            {({ loading }) => (
+              <button className="bg-green-600 text-white px-6 py-4 rounded-2xl shadow hover:scale-105 transition">
+                <Download className="w-5 h-5 inline-block mr-2" />
+                {loading ? "Preparing..." : "Download PDF"}
+              </button>
+            )}
+          </PDFDownloadLink>
+        </div>
+
+        {/* Filters */}
+        <div className="flex gap-4 mb-8">
+          <input
+            type="text"
+            placeholder="Search transactions..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="flex-1 p-4 rounded-2xl border"
+          />
+          <select
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+            className="p-4 rounded-2xl border"
+          >
+            {categories.map((category) => (
+              <option key={category}>{category}</option>
+            ))}
+          </select>
+        </div>
+
+        {/* Transaction List */}
+        <div>
+          {filteredTransactions.length ? (
+            filteredTransactions.map((transaction) => (
+              <div
+                key={transaction.id}
+                className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow flex justify-between mb-4"
+              >
+                <div>
+                  <div className="font-bold">{transaction.note}</div>
+                  <div className="text-sm text-gray-500">
+                    <Tag className="inline w-4 h-4" /> {transaction.category}
+                    <Calendar className="inline w-4 h-4 ml-2" /> {transaction.date}
+                  </div>
+                </div>
+                <div className="flex items-center gap-4">
+                  <div
+                    className={`font-bold text-xl ${
+                      transaction.type === "Expense" ? "text-red-500" : "text-green-500"
+                    }`}
+                  >
+                    {transaction.type === "Expense" ? "-" : "+"}
+                    {formatCurrency(transaction.amount)}
+                  </div>
+                  <button
+                    onClick={() => handleDeleteClick(transaction.id)}
+                    className="p-2 bg-red-100 text-red-500 rounded-full hover:bg-red-200"
+                  >
+                    <Trash2 />
+                  </button>
             <div className="space-y-4">
               {filteredAndSortedTransactions.map((transaction, index) => (
                 <div
@@ -566,60 +609,29 @@ export default function Dashboard() {
                   <Search className={`w-8 h-8 ${darkMode ? "text-gray-500" : "text-gray-400"
                     }`} />
                 </div>
-
-                <p className={`text-lg ${darkMode ? "text-gray-400" : "text-gray-500"
-                  }`}>
-                  No transactions found
-                </p>
-                <p className={darkMode ? "text-gray-500" : "text-gray-400"}>
-                  Try adjusting your search or filters
-                </p>
               </div>
-            )}
-          </div>
+            ))
+          ) : (
+            <p>No transactions found.</p>
+          )}
         </div>
-      </main>
-      <Footer />
 
+        {/* Undo */}
+        <button
+          onClick={undoDelete}
+          className="fixed bottom-6 right-6 bg-yellow-500 text-white px-6 py-3 rounded-xl shadow-lg hover:scale-105 transition"
+        >
+          Undo Delete
+        </button>
 
-      <AddTransactionModal showModal={showModal} setShowModal={setShowModal} darkMode={darkMode} />
-      <ConfirmationModal
-        show={showDeleteModal}
-        onClose={() => setShowDeleteModal(false)}
-        onConfirm={handleConfirmDelete}
-        title={"Confirm Deletion"}
-        message={'Are you sure you want to delete this transaction? This action cannot be undone.'}
-        darkMode={darkMode}
-      />
-
-      <style jsx>{`
-        @keyframes expandWidth {
-          from {
-            transform: scaleX(0);
-          }
-          to {
-            transform: scaleX(1);
-          }
-        }
-        @keyframes fadeIn {
-          from {
-            opacity: 0;
-          }
-          to {
-            opacity: 1;
-          }
-        }
-        @keyframes slideUp {
-          from {
-            transform: translateY(20px);
-            opacity: 0;
-          }
-          to {
-            transform: translateY(0);
-            opacity: 1;
-          }
-        }
-      `}</style>
+        <AddTransactionModal showModal={showModal} setShowModal={setShowModal} />
+        <ConfirmationModal
+          show={showConfirmModal}
+          onConfirm={confirmDelete}
+          onCancel={() => setShowConfirmModal(false)}
+        />
+        <Footer />
+      </div>
     </div>
   );
 }
