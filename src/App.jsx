@@ -4,7 +4,7 @@ import Dashboard from './components/Dashboard';
 import { TransactionProvider } from './components/TransactionContext';
 import { Toaster } from 'react-hot-toast';
 import { CurrencyProvider } from "./components/CurrencyContext";
-import RecurringExpenses from "../../SmartLog.gssoc25/src/components/RecurringExpenses";
+import RecurringExpenses from "./components/RecurringExpenses";
 import AboutPage from './components/AboutPage';
 import ContactPage from './components/ContactPage';
 import GoalsPage from './components/GoalsPage';
