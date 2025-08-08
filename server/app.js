@@ -16,5 +16,7 @@ app.get("/is-up", (req, res) => {
 // All the routes here
 import userRoutes from "./routers/user.routers.js";
 app.use("/api/v1/users", userRoutes);
+import expenseRoutes from "./server/routers/expense.routers.js";
+app.use("/api/expenses", expenseRoutes);
 
 export default app;
