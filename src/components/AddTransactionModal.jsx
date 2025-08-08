@@ -96,46 +96,42 @@ if (!form.category.trim()) {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!validateForm()) return;
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  if (!validateForm()) return;
+  setIsSubmitting(true);
+
+  await new Promise(resolve => setTimeout(resolve, 800));
+
+  try {
+    addTransaction({
+      ...form,
+      id: Date.now(),
+      amount: parseFloat(form.amount)
+    });
+
+    toast.success('Transaction Added Successfully!');
+
+    setForm({
+      amount: '',
+      category: '',
+      type: 'Expense',
+      date: formatDate(new Date()),
+      note: ''
+    });
+
+    setErrors({});
+    handleClose();
+
+  } catch (error) {
+    console.error("Failed to add transaction:", error);
+    toast.error('Could not add transaction. Please try again.');
+  } finally {
+    setIsSubmitting(false);
+  }
+};
+
     
-    setIsSubmitting(true);
-await new Promise(resolve => setTimeout(resolve, 800));
-
-try {
-  addTransaction({
-    ...form,
-    id: Date.now(),
-    amount: parseFloat(form.amount)
-  });
-
-  toast.success('Transaction Added Successfully!');
-
-  setForm({
-    amount: '',
-    category: '',
-    type: 'Expense',
-    date: formatDate(new Date()),
-    note: ''
-  });
-
-  setErrors({});
-  setIsSubmitting(false);
-  handleClose();
-} catch (error) {
-  toast.error('Failed to add transaction.');
-  setIsSubmitting(false);
-}
-    } catch (error) {
-      
-      console.error("Failed to add transaction:", error);
-      toast.error('Could not add transaction. Please try again.');
-    } finally {
-      
-      setIsSubmitting(false);
-      setErrors({});
-    }
   };
   const handleClose = () => {
     setIsVisible(false);
