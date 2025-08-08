@@ -71,6 +71,78 @@ export default function HomePage() {
   ];
 
   return (
+
+      <div className="min-h-screen flex flex-col">
+      <main className="flex-1">
+
+    <div className="relative min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 overflow-hidden">
+      <div className="absolute inset-0">
+        {[...Array(30)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute rounded-full opacity-10"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              width: `${2 + Math.random() * 4}px`,
+              height: `${2 + Math.random() * 4}px`,
+              background: `hsl(${200 + Math.random() * 100}, 70%, 60%)`,
+              animation: `twinkle ${2 + Math.random() * 3}s ease-in-out infinite`,
+              animationDelay: `${Math.random() * 3}s`
+            }}
+          />
+        ))}
+      </div>
+
+
+      <div
+        className="fixed w-96 h-96 pointer-events-none transition-all duration-500 ease-out opacity-30"
+        style={{
+          left: mousePosition.x - 192,
+          top: mousePosition.y - 192,
+          background: 'radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, rgba(139, 92, 246, 0.1) 50%, transparent 70%)',
+          borderRadius: '50%',
+          filter: 'blur(40px)'
+        }}
+      />
+
+      <div className="relative z-10 flex flex-col items-center justify-center min-h-screen text-center">
+
+        <div className={`transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
+
+
+          <div className="m-8 relative" style={{ animationDelay: '0.2s' }}>
+            <div className="w-24 h-24 mx-auto bg-gradient-to-br from-blue-400 via-purple-500 to-pink-500 rounded-3xl flex items-center justify-center mb-6 transform hover:scale-110 hover:rotate-6 transition-all duration-300 shadow-2xl relative overflow-hidden">
+              <Sparkles className="w-12 h-12 text-white animate-pulse relative z-10" />
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 translate-x-full animate-[shimmer_2s_ease-in-out_infinite]"></div>
+            </div>
+
+            <div className="absolute top-2 left-8 w-2 h-2 bg-yellow-400 rounded-full animate-bounce" style={{ animationDelay: '0.5s' }}></div>
+            <div className="absolute top-8 right-4 w-3 h-3 bg-pink-400 rounded-full animate-bounce" style={{ animationDelay: '1s' }}></div>
+            <div className="absolute bottom-4 left-4 w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '1.5s' }}></div>
+          </div>
+
+
+          <h1 className="text-5xl md:text-7xl font-black mb-6 leading-tight">
+            <span className="bg-gradient-to-r from-white via-blue-200 to-purple-200 bg-clip-text text-transparent">
+              Smart
+            </span>
+            <span className="relative inline-block">
+              <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+                Log
+              </span>
+              <div className="absolute -bottom-3 left-0 right-0 h-2 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full transform origin-left animate-[expandWidth_2s_ease-out_1s_forwards] scale-x-0"></div>
+            </span>
+          </h1>
+
+
+          <p className="text-xl md:text-2xl text-gray-300 mb-12 max-w-3xl leading-relaxed">
+            Transform your financial future with
+            <span className="text-blue-300 font-semibold animate-pulse"> AI-powered insights</span>,
+            <br className="hidden md:block" />
+            <span className="text-purple-300 font-semibold"> beautiful visualizations</span>, and
+            <span className="text-pink-300 font-semibold animate-pulse"> smart automation</span>.
+          </p>
     <div
       className={`min-h-screen flex flex-col transition-colors duration-300 ${
         darkMode
@@ -97,6 +169,7 @@ export default function HomePage() {
             )}
           </button>
         </div>
+
 
         {/* Main Content Section */}
         <div className="flex flex-col lg:flex-row items-center justify-between mb-20">
@@ -221,6 +294,11 @@ export default function HomePage() {
             );
           })}
         </div>
+
+//         <div className='w-full'>
+//         </div>
+      </div>
+
         <motion.div
           initial={{ opacity: 0, y: 80, scale: 0.9 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -254,6 +332,7 @@ export default function HomePage() {
           >
             – Rahul M., Pune
           </p>
+
 
           <p
             className={`${
@@ -298,5 +377,6 @@ export default function HomePage() {
       </div>
       <Footer />
     </div>
+
   );
 }
