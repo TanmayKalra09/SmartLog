@@ -190,8 +190,6 @@ const handleCustomCategorySave = () => {
     setShowCategoryDropdown(false);
   }
 };
-    }
-  };
 
   const handleDateChange = (dateString) => {
     setForm({ ...form, date: formatDate(dateString) });
