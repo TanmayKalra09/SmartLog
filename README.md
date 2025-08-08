@@ -7,8 +7,10 @@ A beautiful, responsive, and modern **Expense Tracker App** built with **React**
 ## ✨ Features
 
 - 🔹 Add, view, and delete transactions
+- 🎯 Set and track financial savings goals
 - 📊 View total income, expenses, and current balance
 - 📅 Automatically tracks the date of transactions
+- 📝 Sort transactions based on date and amount 
 - 🖼️ Smooth UI with animated buttons and transitions
 - 📌 Data stored in localStorage (persists on reload)
 - 📂 Modular components and clean codebase
