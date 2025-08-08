@@ -10,16 +10,21 @@ import {
   BarChart3,
   Sparkles,
   ArrowRight,
+
+} from 'lucide-react';
   Sun,
   Moon,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+
 import { motion } from 'framer-motion';
 import Footer from './Footer';
+import AuthModal from './AuthModal';
 
 export default function HomePage() {
   const [isVisible, setIsVisible] = useState(false);
   const [hoveredFeature, setHoveredFeature] = useState(null);
+  const [showAuthModal, setShowAuthModal] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
   const navigate = useNavigate();
 
@@ -29,6 +34,9 @@ export default function HomePage() {
     setIsVisible(true);
   }, []);
 
+  const handleGetStarted = () => {
+    setShowAuthModal(true);
+  };
   useEffect(() => {
     if (darkMode) {
       document.documentElement.classList.add('dark');
@@ -79,6 +87,18 @@ export default function HomePage() {
       }`}
     >
       <div className="relative z-10 container mx-auto px-6 py-8">
+        {/* Hero Section */}
+        <div className="flex items-center justify-between mb-20">
+          <div className="flex-1 max-w-lg ml-16">
+            <div className="mb-8">
+              <div className="w-20 h-20 bg-gradient-to-br from-purple-400 to-pink-500 rounded-2xl flex items-center justify-center shadow-lg mb-6">
+                <Sparkles className="w-10 h-10 text-white" />
+              </div>
+              <h1 className="text-5xl font-black text-gray-800 mb-4">SmartLog</h1>
+              <p className="text-xl text-gray-600 leading-relaxed max-w-lg">
+                Transform your financial future with AI-powered insights,
+                beautiful visualizations, and smart automation.
+              </p>
         {/* Dark Mode Toggle Button */}
         <div className="flex justify-end mb-4">
           <button
@@ -138,6 +158,11 @@ export default function HomePage() {
               <ArrowRight className="w-6 h-6" />
             </button>
           </div>
+          <div className="flex-1 flex justify-end">
+            <img
+              src="/laptop_mobile_mockup.png"
+              alt="SmartLog Mobile and Laptop Mockup"
+              className="w-auto h-[500px] object-contain"
 
           {/* Right Side - Device Mockup */}
           <div className="flex-1 flex justify-center lg:justify-end">
@@ -149,6 +174,7 @@ export default function HomePage() {
           </div>
         </div>
 
+        {/* Features Section */}
         {/* Feature Boxes */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-16 max-w-6xl mx-auto">
           {features.map((feature, index) => {
@@ -168,6 +194,18 @@ export default function HomePage() {
                 whileHover={{
                   scale: 1.03,
                   y: -8,
+                  transition: {
+                    duration: 0.4,
+                    ease: [0.25, 0.46, 0.45, 0.94],
+                  },
+                }}
+                className="group p-8 rounded-3xl bg-white shadow-xl hover:shadow-2xl transition-all duration-500 border border-gray-100"
+              >
+                <div className={`w-16 h-16 mx-auto mb-6 rounded-2xl ${feature.bgColor} flex items-center justify-center`}>
+                  <Icon className="w-8 h-8 text-white" />
+                </div>
+                <h3 className="font-bold text-gray-800 mb-3 text-center text-xl">{feature.title}</h3>
+                <p className="text-base text-gray-500 text-center group-hover:text-gray-600 transition-colors duration-300">
                   transition: { duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] },
                 }}
                 className={`group p-8 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 cursor-pointer ${
@@ -262,6 +300,10 @@ export default function HomePage() {
 
 
       </div>
+
+      {/* Auth Modal */}
+      {showAuthModal && <AuthModal onClose={() => setShowAuthModal(false)} />}
+
       <Footer />
     </div>
   );
