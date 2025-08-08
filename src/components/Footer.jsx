@@ -6,6 +6,10 @@ const Footer = () => {
   return (
     <footer className="w-full bg-slate-950 text-gray-300 border-t border-gray-700 px-6 py-6 mt-auto">
       <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
+       {/* Send Email Button */}
+
+
+
         {/* Navigation Links */}
         <div className="flex flex-row items-center gap-6 text-sm font-medium">
           <Link to="/" className="hover:underline">

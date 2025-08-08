@@ -32,15 +32,6 @@ const ContactPage = ({ darkMode, navigateTo }) => {
             } ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
           >
             
-            {/* Animated Title */}
-            <h1 
-              className={`text-4xl text-center font-black bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-4 transition-all duration-1000 ${
-                isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'
-              }`}
-              style={{ transitionDelay: '200ms' }}
-            >
-              Get In Touch
-            </h1>
             
             {/* Animated Description */}
             <p 
@@ -53,22 +44,33 @@ const ContactPage = ({ darkMode, navigateTo }) => {
             </p>
 
             {/* Clickable Mailto Link, styled as a button */}
-            <div 
-              className={`text-center mt-8 mb-8 transition-all duration-1000 ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}
-              style={{ transitionDelay: '600ms' }}
-            >
-              <a
-                href="mailto:tanmaykalra0910@gmail.com"
-                className={`inline-flex items-center gap-3 px-8 py-4 rounded-lg transition-all duration-300 text-lg font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-1 ${
-                  darkMode
-                    ? 'bg-gray-700 text-gray-100 hover:bg-gray-600'
-                    : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
-                }`}
-              >
-                <Send size={20} />
-                Send us an Email
-              </a>
-            </div>
+            <section className="w-full py-16 px-4 flex flex-col items-center text-center">
+  {/* Stylish Heading */}
+  <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-purple-500 to-indigo-500 bg-clip-text text-transparent drop-shadow-lg hover:scale-105 transition-transform duration-300">
+    Get In Touch
+  </h2>
+
+  {/* Subheading */}
+  <p className="text-gray-500 text-lg max-w-2xl mt-4 mb-10">
+   Whether it's a question, suggestion, or feedback—drop us a line!
+  </p>
+
+  {/* Button with icon before text */}
+  <button
+    onClick={() => {
+      window.open(
+        "https://mail.google.com/mail/?view=cm&to=tanmaykalra0910@gmail.com&su=Feedback&body=Hi%20Tanmay%2C",
+        "_blank"
+      );
+    }}
+    className="bg-white text-slate-950 px-6 py-3 rounded-xl shadow-lg hover:shadow-purple-400/40 hover:bg-gray-100 transition-all duration-300 text-base font-medium flex items-center gap-3 border border-gray-300"
+  >
+    <Send size={18} className="text-purple-600" />
+    Send us an Email
+  </button>
+</section>
+
+
 
             <div 
               className={`border-t my-8 transition-opacity duration-1000 ${

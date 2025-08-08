@@ -1,43 +1,77 @@
-import { useState, useEffect } from 'react';
-import { IndianRupee, TrendingUp, PieChart, BarChart3, Sparkles, ArrowRight } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import Footer from './Footer';
+import { useState, useEffect } from "react";
 
+import { MessageCircle, Lock } from "lucide-react";
+import { Link } from "react-router-dom";
+
+import {
+  IndianRupee,
+  TrendingUp,
+  PieChart,
+  BarChart3,
+  Sparkles,
+  ArrowRight,
+  Sun,
+  Moon,
+} from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import Footer from "./Footer";
 
 export default function HomePage() {
   const [isVisible, setIsVisible] = useState(false);
   const [hoveredFeature, setHoveredFeature] = useState(null);
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [clickEffect, setClickEffect] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
   const navigate = useNavigate();
+
+  const toggleDarkMode = () => setDarkMode(!darkMode);
 
   useEffect(() => {
     setIsVisible(true);
   }, []);
 
   useEffect(() => {
-    const handleMouseMove = (e) => {
-      setMousePosition({ x: e.clientX, y: e.clientY });
-    };
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, []);
+    if (darkMode) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, [darkMode]);
 
-  const handleGetStarted = () => {
-    setClickEffect(true);
-    setTimeout(() => setClickEffect(false), 600);
-    navigate('/dashboard');
-    console.log('Navigating to dashboard...');
-  };
+  const handleGetStarted = () => navigate("/dashboard");
 
   const features = [
-    { icon: IndianRupee, title: 'Track Expenses', desc: 'Monitor every rupee', color: 'from-green-400 to-blue-500' },
-    { icon: TrendingUp, title: 'Smart Analytics', desc: 'Insights that matter', color: 'from-blue-400 to-purple-500' },
-    { icon: PieChart, title: 'Visual Reports', desc: 'See your spending', color: 'from-purple-400 to-pink-500' },
-    { icon: BarChart3, title: 'Budget Goals', desc: 'Stay on track', color: 'from-pink-400 to-red-500' }
+    {
+      icon: IndianRupee,
+      title: "Track Expenses",
+      desc: "Monitor every rupee",
+      bgColor: "bg-blue-500",
+      link: "/track-expenses",
+    },
+    {
+      icon: TrendingUp,
+      title: "Smart Analytics",
+      desc: "Insights that matter",
+      bgColor: "bg-gradient-to-br from-purple-400 to-pink-500",
+      link: "/smart-analytics",
+    },
+    {
+      icon: BarChart3,
+      title: "Budget Goals",
+      desc: "Stay on track",
+      bgColor: "bg-gradient-to-br from-pink-400 to-red-500",
+      link: "/budget-goals",
+    },
+    {
+      icon: PieChart,
+      title: "Visual Reports",
+      desc: "See your spending",
+      bgColor: "bg-gradient-to-br from-green-400 to-blue-500",
+      link: "/visual-reports",
+    },
   ];
 
   return (
+
       <div className="min-h-screen flex flex-col">
       <main className="flex-1">
 
@@ -109,101 +143,240 @@ export default function HomePage() {
             <span className="text-purple-300 font-semibold"> beautiful visualizations</span>, and
             <span className="text-pink-300 font-semibold animate-pulse"> smart automation</span>.
           </p>
+    <div
+      className={`min-h-screen flex flex-col transition-colors duration-300 ${
+        darkMode
+          ? "bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-gray-100"
+          : "bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 text-gray-900"
+      }`}
+    >
+      <div className="relative z-10 container mx-auto px-6 py-8">
+        {/* Dark Mode Toggle Button */}
+        <div className="flex justify-end mb-4">
+          <button
+            onClick={toggleDarkMode}
+            className={`p-2 rounded-full transition-colors duration-300 ${
+              darkMode
+                ? "bg-gray-700 text-yellow-300 hover:bg-gray-600"
+                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+            }`}
+            aria-label="Toggle dark mode"
+          >
+            {darkMode ? (
+              <Sun className="w-5 h-5" />
+            ) : (
+              <Moon className="w-5 h-5" />
+            )}
+          </button>
+        </div>
 
 
-          <div className="mb-6">
-            <div className="text-sm uppercase tracking-widest text-gray-400 font-semibold mb-4 animate-pulse">
-              Ready to take control?
+        {/* Main Content Section */}
+        <div className="flex flex-col lg:flex-row items-center justify-between mb-20">
+          {/* Left Side - Branding */}
+          <div
+            className={`flex-1 max-w-lg lg:ml-16 mb-8 lg:mb-0 text-center lg:text-left ${
+              darkMode ? "text-gray-100" : "text-gray-800"
+            }`}
+          >
+            <div className="mb-8">
+              {/* Logo */}
+              <div className="w-20 h-20 bg-gradient-to-br from-purple-400 to-pink-500 rounded-2xl flex items-center justify-center shadow-lg mb-6">
+                <Sparkles className="w-10 h-10 text-white" />
+              </div>
+              <div>
+                <h1
+                  className="
+                    text-5xl font-extrabold mb-4 leading-tight tracking-tight
+                    bg-gradient-to-r from-blue-500 via-purple-600 to-pink-500
+                    bg-clip-text text-transparent
+                  "
+                >
+                  SmartLog
+                </h1>
+                <p className={`text-xl leading-relaxed max-w-lg`}>
+                  {darkMode ? (
+                    <span className="text-gray-100">
+                      Transform your financial future with AI-powered insights,
+                      beautiful visualizations, and smart automation.
+                    </span>
+                  ) : (
+                    <span className="text-gray-700">
+                      Transform your financial future with AI-powered insights,
+                      beautiful visualizations, and smart automation.
+                    </span>
+                  )}
+                </p>
+              </div>
             </div>
-          </div>
-
-          <div className="relative group mb-16">
             <button
               onClick={handleGetStarted}
-              className={`relative bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white font-bold px-16 py-5 rounded-full text-xl shadow-2xl transition-all duration-300 hover:shadow-purple-500/30 hover:scale-105 hover:-translate-y-2 focus:outline-none focus:ring-4 focus:ring-purple-500/50 ${clickEffect ? 'animate-pulse scale-95' : ''}`}
+              className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-12 py-5 rounded-full font-bold text-xl hover:shadow-lg hover:scale-105 transition-all duration-300 flex items-center space-x-3"
             >
-              <span className="relative z-10 flex items-center gap-3">
-                Start Your Journey
-                <ArrowRight className="w-6 h-6 transition-transform group-hover:translate-x-2" />
-              </span>
-
-
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full blur-lg opacity-0 group-hover:opacity-60 transition-opacity duration-300 animate-pulse"></div>
+              <span>Get Started</span>
+              <ArrowRight className="w-6 h-6" />
             </button>
-
-
-            <div className="absolute -top-4 -right-4 w-4 h-4 bg-green-400 rounded-full animate-ping"></div>
-            <div className="absolute -bottom-4 -left-4 w-3 h-3 bg-yellow-400 rounded-full animate-ping" style={{ animationDelay: '0.5s' }}></div>
-            <div className="absolute top-0 left-8 w-2 h-2 bg-pink-400 rounded-full animate-bounce" style={{ animationDelay: '1s' }}></div>
           </div>
 
+          {/* Right Side - Device Mockup */}
+          <div className="flex-1 flex justify-center lg:justify-end">
+            <img
+              src="/laptop_mobile_mockup.png"
+              alt="SmartLog Mobile and Laptop Mockup"
+              className="w-auto h-[300px] md:h-[400px] lg:h-[500px] object-contain"
+            />
+          </div>
+        </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16 max-w-5xl">
-            {features.map((feature, index) => {
-              const Icon = feature.icon;
-              const isHovered = hoveredFeature === index;
-              return (
-                <div
+        {/* Feature Boxes */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16 max-w-6xl mx-auto">
+          {features.map((feature, index) => {
+            const Icon = feature.icon;
+
+            return (
+              <Link to={feature.link} key={index}>
+                <motion.div
                   key={index}
-                  className={`group p-6 rounded-3xl backdrop-blur-lg transition-all duration-500 cursor-pointer transform hover:scale-110 hover:-translate-y-2 ${isHovered
-                      ? 'bg-white/20 shadow-2xl border border-white/30 shadow-purple-500/20'
-                      : 'bg-white/5 hover:bg-white/10 border border-white/10'
-                    }`}
-                  style={{
-                    animationDelay: `${0.3 + index * 0.15}s`,
-                    animation: isVisible ? 'slideUp 0.8s ease-out forwards' : 'none'
+                  initial={{ opacity: 0, y: 80, scale: 0.9 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{
+                    duration: 0.8,
+                    delay: index * 0.15,
+                    ease: [0.25, 0.46, 0.45, 0.94],
                   }}
-                  onMouseEnter={() => setHoveredFeature(index)}
-                  onMouseLeave={() => setHoveredFeature(null)}
+                  whileHover={{
+                    scale: 1.03,
+                    y: -8,
+                    transition: {
+                      duration: 0.4,
+                      ease: [0.25, 0.46, 0.45, 0.94],
+                    },
+                  }}
+                  className={`group p-8 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 cursor-pointer ${
+                    darkMode
+                      ? "bg-gray-900 text-gray-100"
+                      : "bg-white text-gray-900"
+                  }`}
                 >
-                  <div className={`w-12 h-12 mx-auto mb-4 rounded-2xl bg-gradient-to-br ${feature.color} flex items-center justify-center transform transition-all duration-300 ${isHovered ? 'scale-110 rotate-6' : ''}`}>
-                    <Icon className="w-6 h-6 text-white" />
-                  </div>
-                  <h3 className="font-bold text-white mb-2 text-sm md:text-base">{feature.title}</h3>
-                  <p className="text-xs md:text-sm text-gray-400 group-hover:text-gray-300 transition-colors duration-300">{feature.desc}</p>
-
-
-                  <div className={`mt-3 h-0.5 bg-gradient-to-r ${feature.color} rounded-full transform transition-all duration-300 ${isHovered ? 'scale-x-100' : 'scale-x-0'}`}></div>
-                </div>
-              );
-            })}
-          </div>
+                  <motion.div
+                    className={`${feature.bgColor} w-16 h-16 mx-auto mb-6 rounded-2xl flex items-center justify-center text-white`}
+                    whileHover={{
+                      scale: 1.08,
+                      rotate: 3,
+                      transition: {
+                        duration: 0.4,
+                        ease: [0.25, 0.46, 0.45, 0.94],
+                      },
+                    }}
+                    transition={{
+                      duration: 0.4,
+                      ease: [0.25, 0.46, 0.45, 0.94],
+                    }}
+                  >
+                    <Icon className="w-8 h-8 text-white" />
+                  </motion.div>
+                  <h3
+                    className={`text-center text-xl font-bold tracking-wide ${
+                      darkMode ? "text-gray-100" : "text-gray-700"
+                    }`}
+                  >
+                    {feature.title}
+                  </h3>
+                  <p
+                    className={`text-base text-center leading-snug mt-2 ${
+                      darkMode ? "text-gray-100" : "text-gray-600"
+                    }`}
+                  >
+                    {feature.desc}
+                  </p>
+                </motion.div>
+              </Link>
+            );
+          })}
         </div>
-        <div className='w-full'>
-        </div>
+
+//         <div className='w-full'>
+//         </div>
       </div>
 
+        <motion.div
+          initial={{ opacity: 0, y: 80, scale: 0.9 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
+          whileHover={{
+            scale: 1.03,
+            y: -8,
+            transition: { duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] },
+          }}
+          className={`p-12 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 cursor-pointer max-w-5xl mx-auto mb-16 text-center ${
+            darkMode ? "bg-gray-900 text-gray-100" : "bg-white text-gray-800"
+          }`}
+        >
+          {/* Testimonials */}
+          <div className="flex justify-center items-center mb-6">
+            <div className="bg-pink-500 w-16 h-16 rounded-2xl flex items-center justify-center text-white mr-4">
+              <MessageCircle className="w-8 h-8" />
+            </div>
+            <h3 className="text-2xl font-bold">What Our Users Say</h3>
+          </div>
 
-      <style jsx>{`
-        @keyframes twinkle {
-          0%, 100% { opacity: 0.1; transform: scale(1); }
-          50% { opacity: 0.3; transform: scale(1.2); }
-        }
-        @keyframes shimmer {
-          to { transform: translateX(200%) skewX(-12deg); }
-        }
-        @keyframes expandWidth {
-          to { transform: scaleX(1); }
-        }
-        @keyframes slideUp {
-          from { opacity: 0; transform: translateY(30px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes fadeInUp {
-          from { opacity: 0; transform: translateY(20px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes scrollDot {
-          0% { transform: translateY(0); opacity: 1; }
-          50% { transform: translateY(12px); opacity: 0.5; }
-          100% { transform: translateY(0); opacity: 1; }
-        }
-      `}</style>
+          <p
+            className={`${darkMode ? "text-gray-300" : "text-gray-600"} italic`}
+          >
+            "I love how SmartLog makes tracking my expenses effortless!"
+          </p>
+          <p
+            className={`mt-2 font-semibold ${
+              darkMode ? "text-gray-100" : "text-gray-800"
+            }`}
+          >
+            – Rahul M., Pune
+          </p>
 
-    </div>
 
-      </main>
+          <p
+            className={`${
+              darkMode ? "text-gray-300" : "text-gray-600"
+            } italic mt-4`}
+          >
+            "SmartLog helped me understand my spending patterns and save more."
+          </p>
+          <p
+            className={`mt-2 font-semibold ${
+              darkMode ? "text-gray-100" : "text-gray-800"
+            }`}
+          >
+            – Ananya K., Delhi
+          </p>
+
+          {/* Divider */}
+          <div
+            className={`my-8 border-t ${
+              darkMode ? "border-gray-700" : "border-gray-300"
+            }`}
+          ></div>
+
+          {/* Security */}
+          <div className="flex justify-center items-center mb-6">
+            <div className="bg-gradient-to-br from-purple-400 to-pink-500 w-16 h-16 rounded-2xl flex items-center justify-center text-white mr-4">
+              <Lock className="w-8 h-8" />
+            </div>
+            <h3 className="text-2xl font-bold">Bank-Level Security</h3>
+          </div>
+
+          <ul
+            className={`space-y-2 ${
+              darkMode ? "text-gray-300" : "text-gray-700"
+            }`}
+          >
+            <li>✓ 256-bit encryption</li>
+            <li>✓ No third-party data sharing</li>
+            <li>✓ GDPR compliant</li>
+          </ul>
+        </motion.div>
+      </div>
       <Footer />
     </div>
+
   );
 }
