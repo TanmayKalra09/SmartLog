@@ -1,89 +1,141 @@
-***🚀 Documentation Code of Conduct — SmartLog | GSSoC’25***
-
-***🌐 Our Commitment***
-
-**SmartLog** is dedicated to creating a safe, inclusive, and growth-oriented space for all contributors. Whether you’re an aspiring developer or a seasoned coder, we welcome you to collaborate, innovate, and shape the future of smart logistics with us.
+# ✨ Contributor Covenant Code of Conduct — GSSoC ✨
 
 ---
 
-***💡 What We Value***
+## 🌟 Our Pledge
 
-We thrive as a community when we:
-- 🤝 Welcome diverse experiences and technical perspectives.
-- 🔍 Build smart solutions through respectful debate and teamwork.
-- 💬 Communicate openly—with patience, clarity, and empathy.
-- 🌱 Support beginners, offer guidance, and appreciate every step forward.
-- 🔄 Value transparency and give credit where it's due.
+We, as members, contributors, and leaders of **GirlScript Summer of Code (GSSoC)**, pledge to make participation in our community a **harassment-free experience for everyone**, regardless of:
 
----
+- 🧬 Age, body size, or visible/invisible disabilities  
+- 🌍 Ethnicity, nationality, or personal appearance  
+- 👩‍💻 Gender identity and expression  
+- 🧠 Level of experience or education  
+- 💼 Socio-economic background  
+- 🕊️ Religion, race, or sexual identity and orientation
 
-***🚫 We Don’t Tolerate***
-
-SmartLog strictly prohibits:
-- ❌ Harassment or discriminatory language of any kind.
-- ❌ Dismissive behavior, elitism, or intimidation.
-- ❌ Off-topic promotion, spam, or irrelevant content.
-- ❌ Copying code/content without attribution.
-- ❌ Any actions that hinder a healthy, inclusive environment.
+We pledge to **act and interact** in ways that contribute to an open, welcoming, diverse, inclusive, and healthy community.
 
 ---
 
-***🌍 Scope of This Code***
+## 🚦 Our Standards
+
+### ✅ Positive behaviors:
+
+- 💖 Showing empathy and kindness toward others  
+- 🤝 Respecting differing opinions, viewpoints, and experiences  
+- 📝 Giving and gracefully accepting constructive feedback  
+- 🌱 Taking responsibility and learning from mistakes  
+- 🎯 Prioritizing what's best for the community  
+
+### ❌ Unacceptable behaviors:
+
+- 🚫 Use of sexualized language or imagery  
+- 🛑 Trolling, insulting, or political/personal attacks  
+- ⚠️ Harassment, in public or private  
+- 🔒 Publishing private information without consent  
+- ❌ Any other inappropriate or unprofessional conduct  
+
+---
+
+## 👨‍⚖️ Enforcement Responsibilities
+
+**GSSoC Program Organizers, Project Admins, and Moderators** are responsible for:
+
+- Clarifying and enforcing community standards  
+- Taking appropriate and fair corrective action  
+- Removing, editing, or rejecting comments, code, issues, and contributions not aligned with this Code  
+
+They will provide clear explanations for moderation actions when needed.
+
+---
+
+## 🌐 Scope
 
 This Code of Conduct applies to:
-- GitHub (issues, PRs, discussions, commits)
-- SmartLog’s official channel (Discord)
-- GSSoC’25-affiliated platforms and events
-- Community interactions on social media (LinkedIn)
+
+- 🗂 All GSSoC repositories and GitHub activity  
+- 🗣️ Communication platforms (e.g., Discord)  
+- 📅 Events, meetings, and social media  
+- 🧍‍♂️ Public or private interactions where individuals represent GSSoC  
 
 ---
 
-***📢 Reporting Concerns***
+## 📋 Pull Request Guidelines
 
-If something feels wrong—say something.
-Reach out to:
-- ***Project Admins / Mentors (via Discord, GitHub, or LinkedIn)***
-- ***SmartLog Maintainers***
-
-**🛡️ All concerns will be handled with discretion and urgency.**
+- All contributions **must align** with this Code of Conduct  
+- PRs that include inappropriate behavior, content, or language **may be rejected**  
+- Enforcement may follow the steps outlined below  
 
 ---
 
-***⚖️ Enforcement Process***
+## 🛡️ Reporting Violations
 
-Violations will result in:
-- 🟡 Gentle reminder and guidance on community norms.
-- 🟠 Temporary suspension based on severity.
-- 🔴 Permanent removal from project spaces if behavior persists.
+If you experience or witness misconduct, report it to:
 
----
+📧 **gssoc@girlscript.tech**
 
-***💼 Contributor Guidelines***
-
-By contributing, you agree to:
-- ✅ Treat every collaborator with respect—especially during reviews.
-- ✅ Share ideas clearly and listen actively.
-- ✅ Focus on smart solutions and logistics-related tech.
-- ✅ Embrace a mindset of mentorship and learning.
+- Reports are confidential and will be treated with discretion  
+- Every case will be reviewed and investigated **promptly and fairly**  
+- The privacy and safety of reporters will always be respected  
 
 ---
 
-***🌟 Our Vision***
+## 📖 Enforcement Guidelines
 
-SmartLog isn't just a logistics tool—it’s an open-source mission to make supply chains smarter, faster, and more accessible. Through GSSoC’25, we’re empowering developers to shape the next generation of tech-enabled logistics solutions. Every issue solved, PR merged, and idea shared helps us move the world—one commit at a time. 🌍💡
-
----
-
-***📜 Attribution***
-
-This Code of Conduct is inspired by the principles outlined in the [Contributor Covenant (v3.0)](https://www.contributor-covenant.org/version/3/0/code_of_conduct/), and has been thoughtfully **adapted for the SmartLog project under the spirit of GirlScript Summer of Code (GSSoC’25).**
-
-It has been customized to reflect the project’s focus on intelligent systems, collaborative problem-solving, and an inclusive open-source ecosystem for logistics innovation.
-
-📌 Original work License under Creative Commons Attribution 4.0 International [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
+GSSoC leaders will use the following **enforcement ladder**:
 
 ---
 
-***🛠️ Let’s build smarter. Let’s build together. Welcome to SmartLog!***
+### 1. ✏️ Correction  
+**Impact**: Unprofessional or inappropriate behavior  
 
-***"Commit to Smart Solutions."***
+**Consequence**:  
+- Private warning  
+- Explanation of the violation  
+- Optional public apology  
+
+---
+
+### 2. ⚠️ Warning  
+**Impact**: Single serious incident or repeated minor violations  
+
+**Consequence**:  
+- Official warning  
+- Required avoidance of the affected parties  
+- May lead to a temporary or permanent ban  
+
+---
+
+### 3. ⏳ Temporary Ban  
+**Impact**: Serious or sustained inappropriate behavior  
+
+**Consequence**:  
+- Temporary removal from participation  
+- No community interaction (public or private) during this time  
+
+---
+
+### 4. 🚫 Permanent Ban  
+**Impact**: Repeated violations or severe misconduct (e.g., hate speech, harassment)  
+
+**Consequence**:  
+- Permanent ban from **all** GSSoC community spaces  
+
+---
+
+## 📜 Attribution
+
+- Based on [Contributor Covenant v2.0](https://www.contributor-covenant.org/version/2/0/code_of_conduct.html)  
+- Enforcement guidelines adapted from [Mozilla’s Code of Conduct Enforcement Ladder](https://github.com/mozilla/diversity)
+
+---
+
+## 🌟 Final Words
+
+By committing to this Code of Conduct, we create a **welcoming, inclusive, and respectful space** for everyone involved in GSSoC.
+
+Let’s make this community reflect the values we stand for:
+
+> 🧠 Support • 🚀 Growth • 💪 Empowerment through Open Source
+
+Together, we can make **GSSoC a safe and collaborative experience for all**! 💫
