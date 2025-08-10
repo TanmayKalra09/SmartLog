@@ -37,7 +37,6 @@ export default function AddTransactionModal({ showModal = true, setShowModal = (
     }).replace(/\d/g, "").trim();
   };
 
-
   useEffect(() => {
     if (showModal) {
       setIsVisible(true);
@@ -95,6 +94,7 @@ const handleSubmit = async (e) => {
       setErrors({});
     }
   };
+  
   const handleClose = () => {
     setIsVisible(false);
     setTimeout(() => setShowModal(false), 300);
@@ -162,18 +162,18 @@ const handleSubmit = async (e) => {
           <div className="p-6 space-y-6">
            
             <div className="space-y-2">
-                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">Amount</label>
+                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">Amount*</label>
               <div className="relative">
-                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 font-medium">{getCurrencySymbol(currency,locale)}</span>
+                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400 font-medium">{getCurrencySymbol(currency,locale)}</span>
                 <input
                   type="number"
                   step="0.01"
                   value={form.amount}
                   onChange={e => handleInputChange("amount", e.target.value)}
-                  className={`w-full pl-8 pr-4 py-3 border-2 rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                  className={`w-full pl-8 pr-4 py-3 border-2 rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 dark:text-white ${
                     errors.amount 
                       ? 'border-red-300 bg-red-50 dark:bg-red-900/20 dark:border-red-700' 
-                      : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 dark:bg-gray-700 dark:text-white'
+                      : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 bg-white dark:bg-gray-700'
                   }`}
                   placeholder="0.00"
                 />
@@ -183,17 +183,17 @@ const handleSubmit = async (e) => {
 
 
             <div className="space-y-2 relative">
-              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">Category</label>
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">Category*</label>
               <input
                 type="text"
                 value={form.category}
                 onChange={e => handleInputChange("category", e.target.value)}
                 onFocus={() => setShowSuggestions(categorySuggestions.length > 0)}
                 onBlur={() => setTimeout(() => setShowSuggestions(false), 100)}
-                className={`w-full px-4 py-3 border-2 rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                className={`w-full px-4 py-3 border-2 rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 dark:text-white ${
                   errors.category 
                     ? 'border-red-300 bg-red-50 dark:bg-red-900/20 dark:border-red-700' 
-                    : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 dark:bg-gray-700 dark:text-white'
+                    : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 bg-white dark:bg-gray-700'
                 }`}
                 placeholder="e.g., Food, Transport, Entertainment"
               />
@@ -210,7 +210,7 @@ const handleSubmit = async (e) => {
                         setShowSuggestions(false);
                         setCategorySuggestions([]);
                       }}
-                      className="px-4 py-2 cursor-pointer hover:bg-blue-100 dark:hover:bg-blue-600 dark:text-white transition-colors"
+                      className="px-4 py-2 cursor-pointer hover:bg-blue-100 dark:hover:bg-blue-600 text-gray-900 dark:text-white transition-colors"
                     >
                       {suggestion}
                     </li>
@@ -223,7 +223,7 @@ const handleSubmit = async (e) => {
 
     
             <div className="space-y-2">
-              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">Type</label>
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">Type*</label>
               <div className="flex bg-gray-100 dark:bg-gray-700 rounded-xl p-1">
                 {['Income', 'Expense'].map((type) => (
                   <button
@@ -257,10 +257,10 @@ const handleSubmit = async (e) => {
                   })()
                 }
                 onChange={(e) => handleInputChange('date', e.target.value)}
-                className={`w-full px-4 py-3 border-2 rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                className={`w-full px-4 py-3 border-2 rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 dark:text-white ${
                   errors.date 
                     ? 'border-red-300 bg-red-50 dark:bg-red-900/20 dark:border-red-700' 
-                    : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 dark:bg-gray-700 dark:text-white'
+                    : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 bg-white dark:bg-gray-700'
                 }`}
               />
                {errors.date && <p className="text-red-500 dark:text-red-400 text-sm animate-pulse">{errors.date}</p>}
@@ -273,7 +273,8 @@ const handleSubmit = async (e) => {
                 value={form.note}
                 onChange={e => handleInputChange("note", e.target.value)}
                 rows={3}
-                className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-700 rounded-xl resize-none transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent hover:border-gray-300 dark:hover:border-gray-600 dark:bg-gray-700 dark:text-white"
+                maxLength={30}
+                className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-700 rounded-xl resize-none transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent hover:border-gray-300 dark:hover:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 placeholder="Add a note about this transaction..."
               />
             </div>
