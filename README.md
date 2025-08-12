@@ -30,6 +30,19 @@ A beautiful, responsive, and modern **Expense Tracker App** built with **React**
 
 ---
 
+## 📂 Folder Structure
+
+```
+/src
+├── /assets         # Static assets like images and SVGs
+├── /components     # Reusable UI components (Modals, Cards, Footer, etc.)
+├── /context        # React Context providers for global state
+├── /pages          # Top-level components for each page/route
+├── App.jsx         # Main application component with routing
+├── index.css       # Global CSS styles
+└── main.jsx        # Main entry point of the application
+```
+
 ## 🚀 Getting Started
 
 Want to run Smart Tracker on your machine? Just follow the steps below.

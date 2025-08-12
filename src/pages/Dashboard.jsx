@@ -11,7 +11,7 @@ import ConfirmationModal from "./ConfirmationModal";
 import Footer from "./Footer";
 // Download imports
 import { PDFDownloadLink } from "@react-pdf/renderer";
-import TransactionPDF from "./TransactionPDF";
+import TransactionPDF from "../components/TransactionPDF";
 import { Link } from "react-router-dom";
 
 export default function Dashboard() {

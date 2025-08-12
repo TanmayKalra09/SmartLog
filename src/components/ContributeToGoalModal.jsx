@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { useCurrency } from "./CurrencyContext";
-import { useTransactions } from './TransactionContext';
+import { useCurrency } from "../context/CurrencyContext";
+import { useTransactions } from '../context/TransactionContext';
 import toast from 'react-hot-toast';
 
 export default function ContributeToGoalModal({ showModal, setShowModal, darkMode, goalId }) {

@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react'; // 1. Import useEffect
-import { useTransactions } from "./TransactionContext";
-import AddGoalModal from './AddGoalModal';
-import Footer from './Footer';
-import GoalCard from './GoalCard';
+import { useTransactions } from "../context/TransactionContext";
+import AddGoalModal from '../components/AddGoalModal';
+import Footer from '../components/Footer';
+import GoalCard from '../components/GoalCard';
 import { Plus } from 'lucide-react';
-import ConfirmationModal from './ConfirmationModal';
-import ContributeToGoalModal from './ContributeToGoalModal';
+import ConfirmationModal from '../components/ConfirmationModal';
+import ContributeToGoalModal from '../components/ContributeToGoalModal';
 
 export default function GoalsPage() {
   const { goals, setGoals } = useTransactions();
