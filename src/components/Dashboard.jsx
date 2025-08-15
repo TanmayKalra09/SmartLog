@@ -303,10 +303,12 @@ export default function Dashboard() {
             {/* Expense Card */}
             <Link to="/expense-history" className="block">
               <div
-                className={`relative p-6 rounded-2xl transition-all duration-500 cursor-pointer transform hover:scale-105 hover:-translate-y-2 ${hoveredCard === "expense" ? "shadow-2xl shadow-red-200" : "shadow-lg"
+               className={`relative p-6 rounded-2xl transition-all duration-500 cursor-pointer transform hover:scale-105 hover:-translate-y-2 ${hoveredCard === "expense" ? "shadow-2xl shadow-red-200" : "shadow-lg"
                   } ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
                 style={{
-                  background: "linear-gradient(135deg, #ef4444 0%, #dc2626 100%)",
+                  borderRadius: 20,
+                  background: "#ed0f0fff",
+                  boxShadow: "2px 2px 6px #ee3c3cff, -2px -2px 6px #e20a0aff",
                   animationDelay: "0.4s",
                 }}
                 onMouseEnter={() => setHoveredCard("expense")}
