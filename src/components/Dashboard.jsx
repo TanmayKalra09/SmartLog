@@ -1,18 +1,19 @@
 
-import { Plus, TrendingUp, TrendingDown, Wallet, IndianRupee, Calendar, Tag, Filter, Search, Eye, EyeOff, ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Trash2, Download, Moon, Sun, Target } from "lucide-react";
+import { Plus, TrendingUp, TrendingDown, Wallet, IndianRupee, Calendar, Tag, Filter, Search, Eye, EyeOff, ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Trash2, Download, Moon, Sun, Target, LogOut } from "lucide-react";
 
 import { useTransactions } from "./TransactionContext";
 import { useCurrency } from "./CurrencyContext";
 import { useState, useEffect } from "react";
 import AddTransactionModal from "./AddTransactionModal";
- import EnhancedEmptyState from "./EnhancedEmptyState";
+import EnhancedEmptyState from "./EnhancedEmptyState";
 
 import ConfirmationModal from "./ConfirmationModal";
 import Footer from "./Footer";
 // Download imports
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import TransactionPDF from "./TransactionPDF";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 export default function Dashboard() {
 
@@ -30,6 +31,7 @@ export default function Dashboard() {
 
   const [animatedValues, setAnimatedValues] = useState({ income: 0, expense: 0, balance: 0 });
   const { currency, locale, setCurrency, setLocale } = useCurrency();
+  const navigate = useNavigate();
   
   const currencies = [
     { code: "INR", locale: "en-IN", symbol: "₹" },
@@ -96,6 +98,32 @@ export default function Dashboard() {
       top: 0,
       behavior: 'smooth'
     });
+  };
+
+  const handleLogout = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (token) {
+        await axios.post('http://localhost:3000/api/v1/users/logout', {}, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+      }
+      
+      // Clear local storage
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      
+      // Redirect to login page
+      navigate('/login');
+    } catch (error) {
+      console.error('Logout error:', error);
+      // Even if there's an error, clear local storage and redirect
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      navigate('/login');
+    }
   };
 
   const balance = income - expense;
@@ -260,17 +288,32 @@ export default function Dashboard() {
               </p>
             </div>
 
-            {/* Dark Mode Toggle Button */}
-            <button
-              onClick={toggleDarkMode}
-              className={`p-2 rounded-full transition-all duration-300 ${darkMode
-                ? "bg-gray-700 text-yellow-300 hover:bg-gray-600"
-                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                }`}
-              aria-label="Toggle dark mode"
-            >
-              {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-            </button>
+            <div className="flex items-center gap-3">
+              {/* Logout Button */}
+              <button
+                onClick={handleLogout}
+                className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all duration-300 ${darkMode
+                  ? "bg-red-900/30 text-red-400 hover:bg-red-900/50"
+                  : "bg-red-100 text-red-600 hover:bg-red-200"
+                  }`}
+                aria-label="Logout"
+              >
+                <LogOut className="w-4 h-4" />
+                <span className="text-sm font-medium">Logout</span>
+              </button>
+
+              {/* Dark Mode Toggle Button */}
+              <button
+                onClick={toggleDarkMode}
+                className={`p-2 rounded-full transition-all duration-300 ${darkMode
+                  ? "bg-gray-700 text-yellow-300 hover:bg-gray-600"
+                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                  }`}
+                aria-label="Toggle dark mode"
+              >
+                {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+              </button>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
