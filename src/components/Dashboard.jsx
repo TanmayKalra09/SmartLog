@@ -1,5 +1,5 @@
 
-import { Plus, TrendingUp, TrendingDown, Wallet, IndianRupee, Calendar, Tag, Filter, Search, Eye, EyeOff, ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Trash2, Download, Moon, Sun, Target } from "lucide-react";
+import { Plus, TrendingUp, TrendingDown, Wallet, IndianRupee, Calendar, Tag, Filter, Search, Eye, EyeOff, ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Trash2, Download, Moon, Sun, Target, LogOut } from "lucide-react";
 
 import { useTransactions } from "./TransactionContext";
 import { useCurrency } from "./CurrencyContext";
@@ -240,6 +240,24 @@ export default function Dashboard() {
     downloadCSV(s)
   }
 
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+const handleLogout = () => {
+  // Remove tokens
+  localStorage.removeItem("accessToken");
+  localStorage.removeItem("refreshToken"); 
+
+  // Call backend logout
+  fetch(`${BACKEND_URL}/api/v1/users/logout`, {
+    method: "POST",
+    credentials: "include"
+  }).catch(err => console.log("Logout API failed:", err));
+
+  // Redirect to login
+  window.location.href = "/login";
+};
+
+  
+
   return (
     <div className={`min-h-screen flex flex-col transition-colors duration-300 ${darkMode
       ? "bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-gray-100"
@@ -260,17 +278,30 @@ export default function Dashboard() {
               </p>
             </div>
 
-            {/* Dark Mode Toggle Button */}
-            <button
-              onClick={toggleDarkMode}
-              className={`p-2 rounded-full transition-all duration-300 ${darkMode
-                ? "bg-gray-700 text-yellow-300 hover:bg-gray-600"
-                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                }`}
-              aria-label="Toggle dark mode"
-            >
-              {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-            </button>
+            <div className="flex items-center gap-5">
+              { /* Logout Button */}
+              <button
+                  onClick={handleLogout}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all duration-300 cursor-pointer transform hover:scale-105 hover:-translate-x-1 bg-purple-500 text-white hover:bg-red-600
+                    }`}
+                  aria-label="Logout"
+                >
+                  <LogOut />
+                  <span className="text-sm font-medium">Logout</span>
+                </button>
+
+              {/* Dark Mode Toggle Button */}
+              <button
+                onClick={toggleDarkMode}
+                className={`p-2 rounded-full transition-all duration-300 ${darkMode
+                  ? "bg-gray-700 text-yellow-300 hover:bg-gray-600"
+                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                  }`}
+                aria-label="Toggle dark mode"
+              >
+                {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+              </button>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
