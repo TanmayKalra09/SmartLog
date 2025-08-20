@@ -1,6 +1,8 @@
 import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeOff, Mail, Lock } from "lucide-react";
 import React, { useState } from "react";
+import { useAuth } from '../contexts/AuthContext';
+import toast from 'react-hot-toast';
 
 export default function SignIn() {
   const [userInfo, setUserInfo] = useState({
@@ -9,17 +11,28 @@ export default function SignIn() {
   });
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const { login } = useAuth();
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setUserInfo((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
-    // For now, skip API call and just navigate
-    navigate("/dashboard");
+    const result = await login(userInfo);
+
+    if (result.success) {
+      toast.success('Welcome back!');
+      navigate("/dashboard");
+    } else {
+      toast.error(result.message || 'Login failed');
+    }
+
+    setLoading(false);
   };
 
   const togglePasswordVisibility = () => {
@@ -41,7 +54,6 @@ export default function SignIn() {
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
-             
               <div className="relative">
                 <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <Mail className="h-5 w-5 text-gray-400" />
@@ -55,12 +67,12 @@ export default function SignIn() {
                   value={userInfo.email}
                   onChange={handleInputChange}
                   required
+                  disabled={loading}
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-             
               <div className="relative">
                 <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <Lock className="h-5 w-5 text-gray-400" />
@@ -74,11 +86,13 @@ export default function SignIn() {
                   value={userInfo.password}
                   onChange={handleInputChange}
                   required
+                  disabled={loading}
                 />
                 <button
                   type="button"
                   onClick={togglePasswordVisibility}
                   className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                  disabled={loading}
                 >
                   {showPassword ? (
                     <EyeOff className="h-5 w-5 text-gray-400" />
@@ -100,9 +114,17 @@ export default function SignIn() {
 
             <button
               type="submit"
-              className="w-full bg-purple-500 hover:bg-green-600 text-white font-semibold py-3 px-4 rounded-lg"
+              disabled={loading}
+              className="w-full bg-purple-500 hover:bg-green-600 text-white font-semibold py-3 px-4 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Login
+              {loading ? (
+                <div className="flex items-center justify-center">
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                  Signing in...
+                </div>
+              ) : (
+                'Login'
+              )}
             </button>
           </form>
 
