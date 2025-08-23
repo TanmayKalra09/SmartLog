@@ -30,30 +30,17 @@ const AboutPage = () => {
 
   const faqs = [
     {
-      question: "1.) Is SmartLog free to use?",
-      answer: "--> SmartLog offers a powerful free tier that includes all core features. We also have premium plans for advanced analytics and features.",
+      question: "Is SmartLog free to use?",
+      answer: "SmartLog offers a powerful free tier that includes all core features. We also have premium plans for advanced analytics and features.",
     },
     {
-      question: "2.) Is my financial data secure?",
-      answer: "--> Yes, your data is our top priority. We use industry-standard encryption and security protocols to ensure your information is always safe.",
+      question: "Is my financial data secure?",
+      answer: "Yes, your data is our top priority. We use industry-standard encryption and security protocols to ensure your information is always safe.",
     },
     {
-      question: "3.) Can I sync with my bank account?",
-      answer: " --> Currently, SmartLog supports manual expense tracking. We are working on adding secure bank synchronization in a future update.",
+      question: "Can I sync with my bank account?",
+      answer: "Currently, SmartLog supports manual expense tracking. We are working on adding secure bank synchronization in a future update.",
     },
-     {
-      question: "4.) What is an expense tracker?",
-      answer: " --> An expense tracker is an application or software that helps individuals and businesses record, categorize, and manage their income and outflow of money",
-    },
-    {
-      question : "5.) Can I change my profile details later?",
-      answer: "--> Yes, profile settings, including currency, can usually be adjusted by a finance manager or through user settings"
-    },
-    {
-      question: "6.) Can I add recurring expenses?",
-      answer: "--> Yes, for regular payments like subscriptions, you can set up recurring transactions",
-
-    }
   ];
 
   return (
@@ -175,7 +162,11 @@ const AboutPage = () => {
               className={`transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
               style={{ transitionDelay: '2000ms' }}
             >
-              <h2 className="text-2xl font-bold text-center mb-6">Meet the Developer</h2>
+              <h2 
+                className="text-2xl font-bold text-center mb-6 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent"
+              >
+                Meet the Developer
+              </h2>
               <div className={`flex flex-col items-center gap-4 text-gray-700`}>
                 <p className="text-center max-w-2xl mx-auto">
                   SmartLog was created with a passion for building effective tools that simplify everyday tasks. Your feedback is invaluable, so please don't hesitate to reach out with any questions or suggestions.
