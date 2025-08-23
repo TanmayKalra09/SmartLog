@@ -190,14 +190,14 @@ const AboutPage = () => {
               style={{ transitionDelay: '2200ms' }}
             >
               <Link
-                to="/dashboard"
+                to="/login"
                 className={`inline-flex items-center gap-2 px-8 py-4 rounded-lg transition-all duration-300 text-sm font-semibold text-white 
                 bg-gradient-to-r from-purple-500 to-pink-500
                 hover:from-purple-600 hover:to-pink-600 
                 hover:shadow-lg hover:scale-105`}
               >
                 <ArrowLeft size={16} />
-                Back to Dashboard
+                Want to start the journey
               </Link>
             </div>
           </div>
