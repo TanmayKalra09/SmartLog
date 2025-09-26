@@ -240,6 +240,14 @@ export default function Dashboard() {
     downloadCSV(s)
   }
 
+  // use usestate hook for handle the state of a trasnction 
+
+  const [transactionToEdit,setTransactionToEdit]=useState(null);
+  const handleEdit=(transaction)=>{
+    setTransactionToEdit(transaction);
+    setShowModal(true); // to show when tap edit button the transction will show
+  };
+
   return (
     <div className={`min-h-screen flex flex-col transition-colors duration-300 ${darkMode
       ? "bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-gray-100"
@@ -556,6 +564,17 @@ export default function Dashboard() {
                     >
                       <Trash2 className="w-5 h-5" />
                     </button>
+                    <button
+                      onClick={()=>handleEdit(transaction)}
+                      className={`transition-colors ${
+                                    darkMode
+                             ? "text-gray-500 hover:text-blue-400"
+                             : "text-gray-400 hover:text-blue-600"
+                      }`}
+                      title="Edit"
+                    >
+                      ✏️
+                    </button>
                   </div>
                 </div>
 
@@ -620,7 +639,7 @@ export default function Dashboard() {
 
       <Footer />
 
-      <AddTransactionModal showModal={showModal} setShowModal={setShowModal} darkMode={darkMode} />
+      <AddTransactionModal showModal={showModal} setShowModal={setShowModal} darkMode={darkMode} transactionToEdit={transactionToEdit}  setTransactionToEdit={setTransactionToEdit}  />
       <ConfirmationModal
         show={showDeleteModal}
         onClose={() => setShowDeleteModal(false)}
