@@ -145,7 +145,7 @@ export default function HomePage() {
           {/* Right Side */}
           <div className="flex-1 flex justify-center lg:justify-end">
             <img
-              src="/laptop_mobile_mockup.png"
+              src="/laptop_mobile_mockup.png" 
               alt="SmartLog Mobile and Laptop Mockup"
               className="w-auto h-[300px] md:h-[400px] lg:h-[500px] object-contain"
             />
