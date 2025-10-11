@@ -29,6 +29,33 @@ export default function HomePage() {
 
   const handleGetStarted = () => navigate('/dashboard');
 
+  const cardVariants = {
+    initial: { opacity: 0, y: 80, scale: 0.9 },
+    animate: { opacity: 1, y: 0, scale: 1 },
+    hover: {
+      scale: 1.06,
+      y: -6,
+      transition: {
+        type: "spring",
+        stiffness: 300,
+        damping: 20
+      }
+    }
+  };
+
+  const logoVariants = {
+    initial: { scale: 1, rotate: 0 },
+    hover: {
+      scale: 1.12,
+      rotate: 2,
+      transition: {
+        type: "spring",
+        stiffness: 300,
+        damping: 20
+      }
+    }
+  };
+
   const features = [
     {
       icon: IndianRupee,
@@ -62,14 +89,13 @@ export default function HomePage() {
 
   return (
     <div
-      className={`min-h-screen flex flex-col transition-colors duration-300 ${
-        darkMode
-          ? 'bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-gray-100'
-          : 'bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 text-gray-900'
-      }`}
+      className={`min-h-screen flex flex-col transition-colors duration-300 ${darkMode
+        ? 'bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-gray-100'
+        : 'bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 text-gray-900'
+        }`}
     >
       <div className="relative z-10 container mx-auto px-6 py-8">
-        
+
         {/* Single-line Navbar with Dark Mode Toggle */}
         <nav className="flex justify-between items-center py-4 mb-12 border-b border-gray-300 dark:border-gray-700">
           {/* Logo */}
@@ -97,11 +123,10 @@ export default function HomePage() {
             </Link>
             <button
               onClick={toggleDarkMode}
-              className={`p-2 rounded-full transition-colors duration-300 ${
-                darkMode
-                  ? 'bg-gray-700 text-yellow-300 hover:bg-gray-600'
-                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-              }`}
+              className={`p-2 rounded-full transition-colors duration-300 ${darkMode
+                ? 'bg-gray-700 text-yellow-300 hover:bg-gray-600'
+                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                }`}
               aria-label="Toggle dark mode"
             >
               {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
@@ -112,9 +137,8 @@ export default function HomePage() {
         {/* Hero Section */}
         <div className="flex flex-col lg:flex-row items-center justify-between mb-20">
           {/* Left Side */}
-          <div className={`flex-1 max-w-lg lg:ml-16 mb-8 lg:mb-0 text-center lg:text-left ${
-            darkMode ? 'text-gray-100' : 'text-gray-800'
-          }`}>
+          <div className={`flex-1 max-w-lg lg:ml-16 mb-8 lg:mb-0 text-center lg:text-left ${darkMode ? 'text-gray-100' : 'text-gray-800'
+            }`}>
             <div className="mb-8">
               <div className="w-20 h-20 bg-gradient-to-br from-purple-400 to-pink-500 rounded-2xl flex items-center justify-center shadow-lg mb-6">
                 <Sparkles className="w-10 h-10 text-white" />
@@ -159,29 +183,21 @@ export default function HomePage() {
             return (
               <Link to={feature.link} key={index}>
                 <motion.div
-                  initial={{ opacity: 0, y: 80, scale: 0.9 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  variants={cardVariants}
+                  initial="initial"
+                  animate="animate"
+                  whileHover="hover"
                   transition={{
-                    duration: 0.8,
-                    delay: index * 0.15,
-                    ease: [0.25, 0.46, 0.45, 0.94],
+                    duration: 0.6,
+                    delay: index * 0.12,
+                    ease: [0.4, 0, 0.2, 1],
                   }}
-                  whileHover={{
-                    scale: 1.03,
-                    y: -8,
-                    transition: { duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] },
-                  }}
-                  className={`group p-8 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 cursor-pointer ${
-                    darkMode ? 'bg-gray-900 text-gray-100' : 'bg-white text-gray-900'
-                  }`}
+                  className={`group p-8 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-100 cursor-pointer ${darkMode ? 'bg-gray-900 text-gray-100' : 'bg-white text-gray-900'
+                    }`}
                 >
                   <motion.div
+                    variants={logoVariants}
                     className={`${feature.bgColor} w-16 h-16 mx-auto mb-6 rounded-2xl flex items-center justify-center text-white`}
-                    whileHover={{
-                      scale: 1.08,
-                      rotate: 3,
-                      transition: { duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] },
-                    }}
                   >
                     <Icon className="w-8 h-8 text-white" />
                   </motion.div>
