@@ -1,127 +1,182 @@
 import React, { useEffect, useState } from "react";
 import { useTransactions } from "./TransactionContext";
+import { useCurrency } from "./CurrencyContext";
 import Footer from "./Footer";
-import { ArrowLeft, Calendar, Tag, Trash2, FileEdit } from "lucide-react";
+import { ArrowLeft, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 export default function ExpenseHistoryPage() {
   const { transactions, deleteTransaction } = useTransactions();
+  const { currency, locale } = useCurrency();
   const navigate = useNavigate();
   const [isVisible, setIsVisible] = useState(false);
-  const [darkMode, setDarkMode] = useState(document.documentElement.classList.contains("dark"));
+  const [darkMode, setDarkMode] = useState(
+    document.documentElement.classList.contains("dark")
+  );
 
   useEffect(() => {
     const timer = setTimeout(() => setIsVisible(true), 10);
     return () => clearTimeout(timer);
   }, []);
 
+  useEffect(() => {
+    const observer = new MutationObserver(() => {
+      setDarkMode(document.documentElement.classList.contains("dark"));
+    });
+    observer.observe(document.documentElement, { attributeFilter: ["class"] });
+    return () => observer.disconnect();
+  }, []);
+
   const expenseTransactions = transactions.filter(
-    (txn) => txn.type.toLowerCase() === "expense"
+    (t) => t.type.toLowerCase() === "expense"
   );
 
-  const maxExpense = Math.max(...expenseTransactions.map(txn => txn.amount || 0), 1); // Avoid divide by 0
+  const total = expenseTransactions.reduce((s, t) => s + t.amount, 0);
+  const maxAmount = Math.max(...expenseTransactions.map((t) => t.amount), 1);
+
+  const formatCurrency = (amount) =>
+    new Intl.NumberFormat(locale, {
+      style: "currency",
+      currency,
+      minimumFractionDigits: 0,
+    }).format(amount);
 
   const formatDate = (dateStr) => {
     if (!dateStr) return "";
     const [day, month, year] = dateStr.split("/");
-    const date = new Date(`${year}-${month}-${day}`);
-    return isNaN(date.getTime()) ? dateStr : date.toLocaleDateString("en-GB", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-    });
+    const d = new Date(`${year}-${month}-${day}`);
+    return isNaN(d.getTime())
+      ? dateStr
+      : d.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
   };
 
+  const getIcon = (category) => {
+    const icons = {
+      Food: "🍽️", Entertainment: "🎬", Utilities: "⚡", Income: "💰",
+      Transport: "🚗", Shopping: "🛍️", Health: "🏥", Education: "📚", Savings: "🏦",
+    };
+    return icons[category] || "📝";
+  };
+
+  const base = darkMode ? "bg-gray-950 text-gray-100" : "bg-gray-50 text-gray-900";
+  const mutedText = darkMode ? "text-gray-500" : "text-gray-400";
+  const secondaryText = darkMode ? "text-gray-400" : "text-gray-500";
+
   return (
-    <div className={`min-h-screen flex flex-col transition-colors duration-300 ${
-      darkMode
-        ? "bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-gray-100"
-        : "bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 text-gray-900"
-    }`}>
-      <main className="flex-1 w-full p-6">
-        <div className="max-w-6xl mx-auto">
-          {/* Header */}
-          <div className={`flex items-center gap-2 mb-6 transition-all duration-700 ${
-            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'
+    <div className={`min-h-screen flex flex-col transition-colors duration-200 ${base}`}>
+      <main className="flex-1 w-full px-5 py-8 mb-24">
+        <div className="max-w-4xl mx-auto">
+
+          {/* ── Header ──────────────────────────────────────────────────── */}
+          <div className={`flex items-center gap-3 mb-8 transition-all duration-500 ${
+            isVisible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-2"
           }`}>
             <button
               onClick={() => navigate("/dashboard")}
-              className="p-2 rounded-full transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-800"
-              title="Back to Dashboard"
+              className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${
+                darkMode
+                  ? "bg-gray-900 border border-gray-800 text-gray-400 hover:text-gray-200"
+                  : "bg-white border border-gray-100 text-gray-400 hover:text-gray-700"
+              }`}
             >
-              <ArrowLeft className="w-5 h-5 text-blue-600 dark:text-gray-300" />
+              <ArrowLeft className="w-4 h-4" />
             </button>
-            <h1 className="text-4xl font-black bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              Expense History
-            </h1>
+            <div>
+              <h1 className="text-2xl font-semibold tracking-tight">Expense history</h1>
+              <p className={`text-sm mt-0.5 ${secondaryText}`}>
+                {expenseTransactions.length} transaction{expenseTransactions.length !== 1 ? "s" : ""}
+              </p>
+            </div>
+
+            {expenseTransactions.length > 0 && (
+              <div className={`ml-auto px-3 py-1.5 rounded-xl text-sm font-semibold ${
+                darkMode
+                  ? "bg-rose-950 text-rose-400"
+                  : "bg-rose-50 text-rose-600"
+              }`}>
+                −{formatCurrency(total)}
+              </div>
+            )}
           </div>
 
-          {/* Expense List */}
-          <div className={`transition-opacity duration-700 ${isVisible ? "opacity-100" : "opacity-0"}`}>
-            {expenseTransactions.length > 0 ? (
-              <div className="space-y-4">
+          {/* ── Divider ─────────────────────────────────────────────────── */}
+          <div className={`h-px mb-6 ${darkMode ? "bg-gray-800" : "bg-gray-100"}`} />
+
+          {/* ── List ────────────────────────────────────────────────────── */}
+          <div className={`transition-all duration-500 delay-100 ${
+            isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+          }`}>
+            {expenseTransactions.length === 0 ? (
+              <div className={`text-center py-16 text-sm ${secondaryText}`}>
+                No expense transactions found.
+              </div>
+            ) : (
+              <div className="space-y-1">
                 {expenseTransactions.map((txn) => {
-                  const percentage = Math.round((txn.amount / maxExpense) * 100);
+                  const pct = Math.round((txn.amount / maxAmount) * 100);
                   return (
                     <div
                       key={txn.id}
-                      className={`rounded-3xl shadow-sm px-4 py-3 border transition-all duration-300 ${
-                        darkMode
-                          ? "bg-gray-800 border-gray-700"
-                          : "bg-white border-gray-200"
+                      className={`group flex items-center gap-3 px-4 py-3 rounded-xl transition-colors duration-150 ${
+                        darkMode ? "hover:bg-gray-900" : "hover:bg-gray-50"
                       }`}
                     >
-                      <div className="flex justify-between items-center gap-3">
-                        {/* Icon */}
-                        <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-gray-200 dark:bg-gray-600">
-                          <FileEdit className="w-6 h-6 text-white" />
-                        </div>
+                      {/* Icon */}
+                      <div className={`w-9 h-9 rounded-lg flex items-center justify-center text-base flex-shrink-0 ${
+                        darkMode ? "bg-rose-950 text-rose-400" : "bg-rose-50 text-rose-500"
+                      }`}>
+                        {getIcon(txn.category)}
+                      </div>
 
-                        {/* Tags, Date, Title */}
-                        <div className="flex-1 ml-2">
-                          <div className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-300 font-medium mb-1">
-                            <Tag className="w-4 h-4" />
-                            {txn.category || "Others"}
-                            <Calendar className="w-4 h-4 ml-4" />
-                            {formatDate(txn.date)}
-                          </div>
-                          <div className="text-sm text-gray-500 dark:text-gray-400">
-                            {txn.title || "--"}
-                          </div>
+                      {/* Info */}
+                      <div className="flex-1 min-w-0">
+                        <div className={`text-sm font-medium truncate ${
+                          darkMode ? "text-gray-200" : "text-gray-800"
+                        }`}>
+                          {txn.note?.trim() || txn.title || "Money spent"}
                         </div>
-
-                        {/* Amount + Delete */}
-                        <div className="flex items-center gap-4">
-                          <div className="text-red-500 font-bold text-lg whitespace-nowrap">
-                            -₹{txn.amount.toLocaleString()}
-                          </div>
-                          <button
-                            onClick={() => deleteTransaction(txn.id)}
-                            className="text-gray-400 hover:text-red-500 transition-colors"
-                            title="Delete"
-                          >
-                            <Trash2 className="w-5 h-5" />
-                          </button>
+                        <div className={`flex items-center gap-2 text-xs mt-0.5 ${mutedText}`}>
+                          <span>{txn.category || "Others"}</span>
+                          <span>·</span>
+                          <span>{formatDate(txn.date)}</span>
+                        </div>
+                        {/* Bar */}
+                        <div className={`mt-2 h-0.5 rounded-full overflow-hidden ${
+                          darkMode ? "bg-gray-800" : "bg-gray-100"
+                        }`}>
+                          <div
+                            className="h-full rounded-full bg-rose-400 transition-all duration-700"
+                            style={{ width: `${pct}%` }}
+                          />
                         </div>
                       </div>
 
-                      {/* Relative progress bar */}
-                      <div className="h-1 mt-3 rounded-full bg-gray-200 dark:bg-gray-700">
-                        <div
-                          className="h-1 rounded-full bg-red-500 transition-all duration-500"
-                          style={{ width: `${percentage}%` }}
-                        />
+                      {/* Amount */}
+                      <div className={`text-sm font-semibold flex-shrink-0 ${
+                        darkMode ? "text-rose-400" : "text-rose-500"
+                      }`}>
+                        −{formatCurrency(txn.amount)}
                       </div>
+
+                      {/* Delete */}
+                      <button
+                        onClick={() => deleteTransaction(txn.id)}
+                        className={`w-7 h-7 rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-150 ${
+                          darkMode
+                            ? "text-gray-600 hover:text-rose-400 hover:bg-rose-950"
+                            : "text-gray-300 hover:text-rose-500 hover:bg-rose-50"
+                        }`}
+                        title="Delete"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
                     </div>
                   );
                 })}
               </div>
-            ) : (
-              <div className="text-center text-gray-500 dark:text-gray-400 mt-12 text-lg">
-                No expense transactions found.
-              </div>
             )}
           </div>
+
         </div>
       </main>
 

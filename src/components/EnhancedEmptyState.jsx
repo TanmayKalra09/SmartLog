@@ -1,62 +1,67 @@
 import React from "react";
 import Lottie from "lottie-react";
 import animationData from "../assets/empty_state.json";
+import { Plus } from "lucide-react";
 
-export default function EnhancedEmptyState({ onAddTransaction }) {
-  const steps = [
-    { label: "Add your first income", done: false },
-    { label: "Add your first expense", done: false },
-    { label: "Set a savings goal", done: false },
-  ];
+const steps = [
+  { label: "Add your first income" },
+  { label: "Add your first expense" },
+  { label: "Set a savings goal" },
+];
 
-  const progress = (steps.filter(s => s.done).length / steps.length) * 100;
-
+export default function EnhancedEmptyState({ onAddTransaction, darkMode = false }) {
   return (
-    <div className="max-w-xl mx-auto p-8 rounded-3xl 
-  bg-white/70 dark:bg-gray-900/60 
-  backdrop-blur-lg border border-gray-200/50 dark:border-gray-700/50 
-  shadow-lg transition-colors duration-300 text-center">
+    <div className={`max-w-sm mx-auto rounded-2xl p-8 text-center transition-colors duration-200 ${
+      darkMode
+        ? "bg-gray-900 border border-gray-800"
+        : "bg-white border border-gray-100"
+    }`}>
 
-      {/* Lottie Animation */}
-      <div className="w-48 mx-auto mb-6">
-        <Lottie animationData={animationData} loop={true} />
-      </div>
+      {/* Lottie */}
+   
 
-      {/* Title */}
-      <h2 className="text-2xl font-bold mb-2 text-gray-800 dark:text-gray-100">
-        Welcome to SmartLog 🎉
+      {/* Heading */}
+      <h2 className={`text-base font-semibold mb-1 ${darkMode ? "text-gray-100" : "text-gray-800"}`}>
+        Welcome to SmartLog
       </h2>
-      <p className="text-gray-600 dark:text-gray-300 mb-6">
-        Let’s get you started with just a few steps.
+      <p className={`text-sm mb-6 ${darkMode ? "text-gray-500" : "text-gray-400"}`}>
+        A few steps to get you set up.
       </p>
 
       {/* Steps */}
-      <ul className="text-left space-y-3 mb-6">
+      <ul className="space-y-2 mb-7 text-left">
         {steps.map((step, i) => (
           <li
             key={i}
-            className={`flex items-center gap-3 p-3 rounded-lg ${
-              step.done ? "bg-green-100 dark:bg-green-900/30" : "bg-gray-100 dark:bg-gray-700"
+            className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm ${
+              darkMode ? "bg-gray-800" : "bg-gray-50"
             }`}
           >
-            <span className={`w-6 h-6 flex items-center justify-center rounded-full ${
-              step.done ? "bg-green-500 text-white" : "bg-gray-400 text-white"
+            <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-medium flex-shrink-0 ${
+              darkMode
+                ? "bg-gray-700 text-gray-400"
+                : "bg-gray-200 text-gray-500"
             }`}>
-              {step.done ? "✓" : i + 1}
+              {i + 1}
             </span>
-            <span className="text-gray-700 dark:text-gray-200">{step.label}</span>
+            <span className={darkMode ? "text-gray-300" : "text-gray-600"}>
+              {step.label}
+            </span>
           </li>
         ))}
       </ul>
 
-     
-
-      {/* Button */}
+      {/* CTA */}
       <button
         onClick={onAddTransaction}
-        className="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full font-medium hover:scale-105 transition-all"
+        className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium transition-opacity hover:opacity-80 ${
+          darkMode
+            ? "bg-gray-100 text-gray-900"
+            : "bg-gray-900 text-white"
+        }`}
       >
-        ➕ Add Your First Transaction
+        <Plus className="w-3.5 h-3.5" />
+        Add your first transaction
       </button>
     </div>
   );
