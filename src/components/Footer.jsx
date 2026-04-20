@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { FaGithub, FaInstagram } from "react-icons/fa";
+import { FaGithub, FaInstagram, FaLinkedin, FaDiscord } from "react-icons/fa";
 
 const Footer = () => {
   return (
@@ -40,6 +40,22 @@ const Footer = () => {
             className="hover:text-white"
           >
             <FaInstagram size={20} />
+          </a>
+          <a
+            href="https://www.linkedin.com/in/tanmay-kalra-09oct/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-white"
+          >
+            <FaLinkedin size={20} />
+          </a>
+          <a
+            href="#"
+            // target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-white"
+          >
+            <FaDiscord size={20} />
           </a>
         </div>
 
