@@ -9,18 +9,46 @@ export default function SignIn() {
   });
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setUserInfo((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // For now, skip API call and just navigate
-    navigate("/dashboard");
+    setError("");
+  
+    try {
+      const response = await fetch("http://localhost:8000/api/v1/users/sign-in", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify(userInfo),
+      });
+  
+      if (response.ok) {
+        // Login success
+        navigate("/dashboard");
+      } else {
+        // parse error message
+        let errorMessage = "Login failed";
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.message || errorMessage;
+        } catch (err) {
+          setError("Network error. Please try again.");
+        }
+        setError(errorMessage);
+      }
+    } catch (err) {
+      setError("Network error. Please try again.");
+    }
   };
+  
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -39,9 +67,11 @@ export default function SignIn() {
             </p>
           </div>
 
+          {error && <p className="text-red-600 text-center mb-2">{error}</p>}
+          
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
-             
+
               <div className="relative">
                 <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <Mail className="h-5 w-5 text-gray-400" />
@@ -60,7 +90,7 @@ export default function SignIn() {
             </div>
 
             <div className="space-y-2">
-             
+
               <div className="relative">
                 <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <Lock className="h-5 w-5 text-gray-400" />

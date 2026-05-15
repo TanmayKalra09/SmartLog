@@ -23,19 +23,42 @@ export default function SignUp() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-
-    // Password match check
+  
     if (formData.password !== formData.confirmPassword) {
       setError("Passwords do not match");
       return;
     }
-
-    // Directly navigate without authentication
-    navigate("/dashboard");
+  
+    try {
+      const response = await fetch("http://localhost:8000/api/v1/users/sign-up", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: formData.name,
+          email: formData.email,
+          password: formData.password,
+          fullName: formData.name,
+        }),
+      });
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        setError(errorData.message || "Registration failed");
+        return;
+      }
+  
+      // If registration is successful, navigate to dashboard or login page
+      navigate("/dashboard");
+    } catch (err) {
+      setError("Network error. Please try again.");
+    }
   };
+  
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">

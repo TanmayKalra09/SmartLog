@@ -97,13 +97,13 @@ const loginUser = asyncHandler(async (req, res) => {
   });
 
   if (!user) {
-    throw new ApiError(404, "No user with the current username or email");
+    throw new ApiError(404, "Error : No user with the current username or email");
   }
 
   const isPasswordCorrect = await user.isPasswordCorrect(password);
 
   if (!isPasswordCorrect) {
-    throw new ApiError(401, "Invalid password");
+    throw new ApiError(401, "Error : Invalid password");
   }
   //Generating user access and refresh tokens
   const { accessToken, refreshToken } = await generateAccessAndRefreshToken(
