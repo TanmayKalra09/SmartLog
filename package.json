@@ -10,7 +10,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    
     "@react-pdf/renderer": "^4.3.0",
+  
     "@tailwindcss/vite": "^4.1.11",
     "framer": "^2.4.1",
     "lottie-react": "^2.4.1",
