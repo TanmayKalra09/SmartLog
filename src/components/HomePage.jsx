@@ -27,7 +27,8 @@ export default function HomePage() {
     }
   }, [darkMode]);
 
-  const handleGetStarted = () => navigate('/dashboard');
+  // Corrected function to navigate to the signup page for new users
+  const handleGetStarted = () => navigate('/signup');
 
   const cardVariants = {
     initial: { opacity: 0, y: 80, scale: 0.9 },
