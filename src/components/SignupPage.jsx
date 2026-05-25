@@ -27,8 +27,36 @@ export default function SignUp() {
     e.preventDefault();
     setError("");
 
+    const { name, email, password, confirmPassword } = formData;
+
+    // Name validation: only letters and spaces
+    const nameRegex = /^[a-zA-Z\s]+$/;
+    if (!name.trim()) {
+      setError("Name is required");
+      return;
+    } else if (!nameRegex.test(name)) {
+      setError("Name can only contain letters and spaces");
+      return;
+    }
+    
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setError("Please enter a valid email address");
+      return;
+    }
+
+    // Strong password validation
+    const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/;
+    if (!strongPasswordRegex.test(password)) {
+      setError(
+        "Password must be at least 8 characters and include uppercase, lowercase, number, and special character"
+      );
+      return;
+    }
+
     // Password match check
-    if (formData.password !== formData.confirmPassword) {
+    if (password !== confirmPassword) {
       setError("Passwords do not match");
       return;
     }
