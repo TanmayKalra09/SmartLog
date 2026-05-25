@@ -1,12 +1,16 @@
 import React, { useState } from "react";
 import { Eye, EyeOff, User, Mail, Lock } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from '../contexts/AuthContext';
+import toast from 'react-hot-toast';
 
 export default function SignUp() {
   const navigate = useNavigate();
+  const { signup } = useAuth();
 
   const [formData, setFormData] = useState({
-    name: "",
+    fullName: "",
+    username: "",
     email: "",
     password: "",
     confirmPassword: "",
@@ -14,7 +18,7 @@ export default function SignUp() {
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setFormData((prev) => ({
@@ -23,18 +27,34 @@ export default function SignUp() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
 
     // Password match check
     if (formData.password !== formData.confirmPassword) {
-      setError("Passwords do not match");
+      toast.error("Passwords do not match");
       return;
     }
 
-    // Directly navigate without authentication
-    navigate("/dashboard");
+    // Password strength check
+    if (formData.password.length < 6) {
+      toast.error("Password must be at least 6 characters long");
+      return;
+    }
+
+    setLoading(true);
+
+    const { confirmPassword, ...signupData } = formData;
+    const result = await signup(signupData);
+
+    if (result.success) {
+      toast.success('Account created successfully! Please login.');
+      navigate("/login");
+    } else {
+      toast.error(result.message || 'Signup failed');
+    }
+
+    setLoading(false);
   };
 
   return (
@@ -45,21 +65,33 @@ export default function SignUp() {
         </h2>
         <br />
 
-        {error && (
-          <p className="mb-4 text-red-500 text-sm text-center">{error}</p>
-        )}
-
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Name */}
+          {/* Full Name */}
           <div className="flex items-center border border-gray-300 rounded-lg px-3 py-2 bg-white">
             <User className="text-gray-400 w-5 h-5 mr-2" />
             <input
               type="text"
-              name="name"
+              name="fullName"
               placeholder="Full Name"
-              value={formData.name}
+              value={formData.fullName}
               onChange={handleChange}
               required
+              disabled={loading}
+              className="w-full outline-none bg-transparent text-gray-700"
+            />
+          </div>
+
+          {/* Username */}
+          <div className="flex items-center border border-gray-300 rounded-lg px-3 py-2 bg-white">
+            <User className="text-gray-400 w-5 h-5 mr-2" />
+            <input
+              type="text"
+              name="username"
+              placeholder="Username"
+              value={formData.username}
+              onChange={handleChange}
+              required
+              disabled={loading}
               className="w-full outline-none bg-transparent text-gray-700"
             />
           </div>
@@ -74,6 +106,7 @@ export default function SignUp() {
               value={formData.email}
               onChange={handleChange}
               required
+              disabled={loading}
               className="w-full outline-none bg-transparent text-gray-700"
             />
           </div>
@@ -84,16 +117,18 @@ export default function SignUp() {
             <input
               type={showPassword ? "text" : "password"}
               name="password"
-              placeholder="Password"
+              placeholder="Password (min 6 characters)"
               value={formData.password}
               onChange={handleChange}
               required
+              disabled={loading}
               className="w-full outline-none bg-transparent text-gray-700"
             />
             <button
               type="button"
               onClick={() => setShowPassword((prev) => !prev)}
               className="ml-2 focus:outline-none"
+              disabled={loading}
             >
               {showPassword ? (
                 <EyeOff className="w-5 h-5 text-gray-500" />
@@ -113,12 +148,14 @@ export default function SignUp() {
               value={formData.confirmPassword}
               onChange={handleChange}
               required
+              disabled={loading}
               className="w-full outline-none bg-transparent text-gray-700"
             />
             <button
               type="button"
               onClick={() => setShowConfirmPassword((prev) => !prev)}
               className="ml-2 focus:outline-none"
+              disabled={loading}
             >
               {showConfirmPassword ? (
                 <EyeOff className="w-5 h-5 text-gray-500" />
@@ -128,21 +165,20 @@ export default function SignUp() {
             </button>
           </div>
 
-          <div className="flex justify-end">
-            <button
-              type="button"
-              className="text-sm font-medium text-violet-600 hover:text-violet-800"
-            >
-              Forgot Password?
-            </button>
-          </div>
-
           {/* Submit */}
           <button
             type="submit"
-            className="w-full bg-purple-500 text-white py-2 rounded-lg hover:bg-purple-600 transition"
+            disabled={loading}
+            className="w-full bg-purple-500 text-white py-2 rounded-lg hover:bg-purple-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Sign Up
+            {loading ? (
+              <div className="flex items-center justify-center">
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                Creating Account...
+              </div>
+            ) : (
+              'Sign Up'
+            )}
           </button>
         </form>
 
